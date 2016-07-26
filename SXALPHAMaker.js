@@ -762,6 +762,7 @@
 
 	ext._shutdown = function(){
 		console.log('Executando: _shutdown');
+
 	//	if(device){
 	//	 	var sendFinish = new Uint8Array(3);
 	//		sendFinish[0] = 77; //M
@@ -775,13 +776,13 @@
 	//	
 	//		device.close();
 	//	}
-	//	if(poller)
-	//		poller = clearInterval(poller);
-	//	if(comPoller)
-	//		comPoller = clearInterval(comPoller);
-	//	if(comWatchdog)
-	//		comWatchdog = clearInterval(comWatchdog);
-	//	device = null;
+		if(poller)
+			poller = clearInterval(poller);
+		if(comPoller)
+			comPoller = clearInterval(comPoller);
+		if(comWatchdog)
+			comWatchdog = clearInterval(comWatchdog);
+		device = null;
 	}
 
 	ext._getStatus = function(){
