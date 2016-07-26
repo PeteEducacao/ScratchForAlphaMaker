@@ -694,6 +694,7 @@
 		if(!device)
 			return;
 		device.open({stopBits: 0, bitRate: 9600, ctsFlowControl: 0});
+		console.log('Tentando conectar com dispositivo ' + device.id);
 		
 		device.set_receive_handler(function(data){
 			if(!rawData)
@@ -785,10 +786,10 @@
 
 	ext._getStatus = function(){
 		console.log('Executando:_getStatus');
-		if(!device) return{status: 1, msg: 'Procurando'};
-		if(watchdog) return {status: 0, msg: 'Probing for PicoBoard'};
+		if(!device) return{status: 1, msg: 'Disconnected'};
+		if(watchdog) return {status: 0, msg: 'Probing for ALPHA Maker'};
 	
-		return{status: 2, msg: 'Conectado'};
+		return{status: 2, msg: 'Connected'};
 	}
 	
 	//************************************************************
