@@ -786,7 +786,7 @@
 	}
 
 	ext._getStatus = function(){
-		console.log('Executando:_getStatus');
+		console.log('<V 2.0> Executando:_getStatus');
 		if(!device) return{status: 1, msg: 'Disconnected'};
 		if(watchdog) return {status: 0, msg: 'Probing for ALPHA Maker'};
 		console.log('Tentando conectar com dispositivo ' + device.id);
