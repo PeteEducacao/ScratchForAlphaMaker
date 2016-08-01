@@ -346,9 +346,9 @@
 		var value;
 		
 		console.log('Nota: ' + note);
-		console.log('Nota vetor: ' + pt[menus['notes'][0]]);
+		console.log('Nota vetor: ' + menus[lang]['notes'][0]);
 		switch(note){
-			case menus['notes'][0]:
+			case menus[lang]['notes'][0]:
 				value = 118;
 				break;
 			case menus['notes'][1]:
@@ -788,10 +788,9 @@
 	}
 
 	ext._getStatus = function(){
-		console.log('<V 2.0> Executando:_getStatus');
 		if(!device) return{status: 1, msg: 'Disconnected'};
 		if(watchdog) return {status: 0, msg: 'Probing for ALPHA Maker'};
-		console.log('Tentando conectar com dispositivo ' + device.id);
+		console.log('Conectado com dispositivo na porta: ' + device.id);
 		return{status: 2, msg: 'Connected'};
 	
 	}
@@ -936,7 +935,7 @@
 	var descriptor = {
 		blocks: blocks[lang],
     		menus: menus[lang],
-		url: 'http://PeteEducacao.github.io/ScratchForMaker'
+		url: 'http://PeteEducacao.github.io/ScratchForAlphaMaker'
 	};
 	
 	ScratchExtensions.register('ALPHA Maker', descriptor, ext,{type: 'serial'});
