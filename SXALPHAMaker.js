@@ -22,16 +22,16 @@
 	//Connect a sensor to a port
 	ext.connectSensor = function(sensor, port){
 		switch(port){
-			case menus['ports'][0]:
+			case menus[lang]['ports'][0]:
 				portsSelectedSensor[0] = sensor;
 				break;
-			case menus['ports'][1]:
+			case menus[lang]['ports'][1]:
 				portsSelectedSensor[1] = sensor;
 				break;
-			case menus['ports'][2]:
+			case menus[lang]['ports'][2]:
 				portsSelectedSensor[2] = sensor;
 				break;
-			case menus['ports'][3]:
+			case menus[lang]['ports'][3]:
 				portsSelectedSensor[3] = sensor;
 				break;
 		}
@@ -46,26 +46,26 @@
 		
 		switch(option){
 			//On
-			case menus['on_off'][0]:
+			case menus[lang]['on_off'][0]:
 				setMessage[1] = 87; //W
 				break;
 			//Off
-			case menus['on_off'][1]:
+			case menus[lang]['on_off'][1]:
 				setMessage[1] = 119; //w
 				break;
 		}
 		
 		switch(port){
-			case menus['ports'][0]:
+			case menus[lang]['ports'][0]:
 				setMessage[2] = 49; //1
 				break;
-			case menus['ports'][1]:
+			case menus[lang]['ports'][1]:
 				setMessage[2] = 50; //2
 				break;
-			case menus['ports'][2]:
+			case menus[lang]['ports'][2]:
 				setMessage[2] = 51; //3
 				break;
-			case menus['ports'][3]:
+			case menus[lang]['ports'][3]:
 				setMessage[2] = 52; //4
 				break;
 		}
@@ -76,16 +76,16 @@
 	//Read the port, automatically convert the value using the selected sensor
 	ext.readPort = function(port){
 		switch(port){
-			case menus['ports'][0]:
+			case menus[lang]['ports'][0]:
 				port = 0;
 				break;
-			case menus['ports'][1]:
+			case menus[lang]['ports'][1]:
 				port = 1;
 				break;
-			case menus['ports'][2]:
+			case menus[lang]['ports'][2]:
 				port = 2;
 				break;
-			case menus['ports'][3]:
+			case menus[lang]['ports'][3]:
 				port = 3;
 	 			break;
 	 	}
@@ -94,33 +94,33 @@
 		//'Resistência (Ohm)', 'Tensão (V)', 'Distância (cm)', 'Distância Sharp (cm)'
 	 	switch(portsSelectedSensor[port]){
 	 		//Digital
-		 	case menus['sensors'][0]:
-		 	case menus['sensors'][1]:
-		 	case menus['sensors'][2]:
+		 	case menus[lang]['sensors'][0]:
+		 	case menus[lang]['sensors'][1]:
+		 	case menus[lang]['sensors'][2]:
 		 		return portsValue[port];
 		 	//Color
-		 	case menus['sensors'][3]:
+		 	case menus[lang]['sensors'][3]:
 		 		return convertToColor(portsValue[port]);
 		 	//Light
-		 	case menus['sensors'][4]:
+		 	case menus[lang]['sensors'][4]:
 		 		return convertToLux(portsValue[port]);
 		 	//Sound
-		 	case menus['sensors'][5]:
+		 	case menus[lang]['sensors'][5]:
 		 		return convertToDb(portsValue[port]);
 		 	//Temperature
-		 	case menus['sensors'][6]:
+		 	case menus[lang]['sensors'][6]:
 		 		return convertToCelsius(portsValue[port]);
 		 	//Resistance
-		 	case menus['sensors'][7]:
+		 	case menus[lang]['sensors'][7]:
 		 		return convertToOhm(portsValue[port]);
 		 	//Voltage
-		 	case menus['sensors'][8]:
+		 	case menus[lang]['sensors'][8]:
 		 		return convertToVolts(portsValue[port]);
 		 	//Distance
-		 	case menus['sensors'][9]:
+		 	case menus[lang]['sensors'][9]:
 		 		return convertToCentimeters(portsValue[port]);
 		 	//Distance Sharp
-		 	case menus['sensors'][10]:
+		 	case menus[lang]['sensors'][10]:
 		 		return convertToCentimetersSharp(portsValue[port]);
 		 	default:
 		 		return portsValue[port];
@@ -177,11 +177,11 @@
 			
 		switch(mode){
 			//Input. Enable reading report
-			case menus['pinModes'][0]:
+			case menus[lang]['pinModes'][0]:
 				setMessage[3] = 100; //d
 				break;
 			//Output. Disable reading report
-			case menus['pinModes'][1]:
+			case menus[lang]['pinModes'][1]:
 				setMessage[3] = 110; //n
 				break;
 		}
@@ -203,7 +203,7 @@
 		setMessage[5] = 13; //\r
 		
 		//Enable
-		if(mode == menus['enable_disable'][0]){
+		if(mode == menus[lang]['enable_disable'][0]){
 			pin = pin + 100;
 		}
 		else{
@@ -244,11 +244,11 @@
 		
 		switch(status){
 			//On
-			case menus['on_off'][0]:
+			case menus[lang]['on_off'][0]:
 				setMessage[2] = 203;
 				break;
 			//Off
-			case menus['on_off'][1]:
+			case menus[lang]['on_off'][1]:
 				setMessage[2] = 202;
 				break;
 		}
@@ -273,9 +273,9 @@
 		sendServo[4] = (angle % 100) / 10 + 48;
 		sendServo[5] = angle % 10 + 48;
 		
-		if(servo == menus['servos'][0])
+		if(servo == menus[lang]['servos'][0])
 			sendServo[1] = 111; //o
-		if(servo == menus['servos'][1])
+		if(servo == menus[lang]['servos'][1])
 			sendServo[1] = 112; //p
 			
 		device.send(sendServo.buffer);
@@ -294,15 +294,15 @@
 			power = 0;
 		if(power > 100)
 			power = 100;
-		if(direction == menus['directions'][1])
+		if(direction == menus[lang]['directions'][1])
 			power = power + 128;
 		sendMotor[3] = power / 100 + 48;
 		sendMotor[4] = (power % 100) / 10 + 48;
 		sendMotor[5] = power % 10 + 48;
 			
-		if(motor == menus['motor'][0])
+		if(motor == menus[lang]['motor'][0])
 			sendMotor[1] = 101 //e
-		if(motor == menus['motor'][1])
+		if(motor == menus[lang]['motor'][1])
 			sendMotor[1] = 100 //d
 		
 		device.send(sendMotor.buffer);
@@ -318,9 +318,9 @@
 		sendMotor[5] = 48; //0
 		sendMotor[6] = 13; //\r
 			
-		if(motor == menus['motor'][0])
+		if(motor == menus[lang]['motor'][0])
 			sendMotor[1] = 101 //e
-		if(motor == menus['motor'][1])
+		if(motor == menus[lang]['motor'][1])
 			sendMotor[1] = 100 //d
 		
 		device.send(sendMotor.buffer);
@@ -345,43 +345,41 @@
 		
 		var value;
 		
-		console.log('Nota: ' + note);
-		console.log('Nota vetor: ' + menus[lang]['notes'][0]);
 		switch(note){
 			case menus[lang]['notes'][0]:
 				value = 118;
 				break;
-			case menus['notes'][1]:
+			case menus[lang]['notes'][1]:
 				value = 112;
 				break;
-			case menus['notes'][2]:
+			case menus[lang]['notes'][2]:
 				value = 105;
 				break;
-			case menus['notes'][3]:
+			case menus[lang]['notes'][3]:
 				value = 99;
 				break;
-			case menus['notes'][4]:
+			case menus[lang]['notes'][4]:
 				value = 94;
 				break;
-			case menus['notes'][5]:
+			case menus[lang]['notes'][5]:
 				value = 88;
 				break;
-			case menus['notes'][6]:
+			case menus[lang]['notes'][6]:
 				value = 83;
 				break;
-			case menus['notes'][7]:
+			case menus[lang]['notes'][7]:
 				value = 79;
 				break;
-			case menus['notes'][8]:
+			case menus[lang]['notes'][8]:
 				value = 74;
 				break;
-			case menus['notes'][9]:
+			case menus[lang]['notes'][9]:
 				value = 70;
 				break;
-			case menus['notes'][10]:
+			case menus[lang]['notes'][10]:
 				value = 66;
 				break;
-			case menus['notes'][11]:
+			case menus[lang]['notes'][11]:
 				value = 62;
 				break;
 			default:
@@ -411,9 +409,9 @@
 		sendSLuz[1] = 71; //G
 		sendSLuz[3] = 13; //\r
 		
-		if(comportamento == menus['comportamentoLuz'][0])  // Siga Luz
+		if(comportamento == menus[lang]['comportamentoLuz'][0])  // Siga Luz
 			sendSLuz[2] = 76; //L	
-		if(comportamento == menus['comportamentoLuz'][1])  // Fuja Luz
+		if(comportamento == menus[lang]['comportamentoLuz'][1])  // Fuja Luz
 			sendSLuz[2] = 108; //l
 		
 		device.send(sendSLuz.buffer);
@@ -426,9 +424,9 @@
 		sendSLuz[1] = 71; //G
 		sendSLuz[3] = 13; //\r
 		
-		if(tipoFaixa == menus['corFaixa'][0])  // clara
+		if(tipoFaixa == menus[lang]['corFaixa'][0])  // clara
 			sendSLuz[2] = 70 //F	
-		if(tipoFaixa == menus['corFaixa'][1])  // escura
+		if(tipoFaixa == menus[lang]['corFaixa'][1])  // escura
 			sendSLuz[2] = 102 //f
 		
 		device.send(sendSLuz.buffer);
@@ -458,19 +456,19 @@
 	function convertToColor(val){
 		//'Blue', 'Red', 'Yellow', 'Green', 'White', 'Black', 'Undefined'
 		if(val <= 160)
-			return menus['colors'][0];
+			return menus[lang]['colors'][0];
 		if(val > 160 && val <= 328)
-			return menus['colors'][1];
+			return menus[lang]['colors'][1];
 		if(val > 328 && val <= 460)
-			return menus['colors'][2];
+			return menus[lang]['colors'][2];
 		if(val > 460 && val <= 608)
-			return menus['colors'][3];
+			return menus[lang]['colors'][3];
 		if(val > 608 && val <= 788)
-			return menus['colors'][4];
+			return menus[lang]['colors'][4];
 		if(val > 788 && val <= 908)
-			return menus['colors'][5];
+			return menus[lang]['colors'][5];
 		if(val > 908)
-			return menus['colors'][6];
+			return menus[lang]['colors'][6];
 	}
 	
 	//Convert the value to Ohms
