@@ -346,7 +346,7 @@
 		var value;
 		
 		console.log('Nota: ' + note);
-		console.log('Nota vetor: ' + pt:menus['notes'][0]);
+		console.log('Nota vetor: ' + pt[menus['notes'][0]]);
 		switch(note){
 			case menus['notes'][0]:
 				value = 118;
