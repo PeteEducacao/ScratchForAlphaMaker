@@ -492,8 +492,9 @@
 	
 	//Convert the value to Lux
 	function convertToLux(val){
-		console.log('Valor = '+val);
-		return Math.round(50 * val / (2700000 / 127 *0.00076725)) / 10;
+
+		return val;
+		//return Math.round(50 * val / (2700000 / 127 *0.00076725)) / 10;
 	}
 	
 	//Convert the value to dB
