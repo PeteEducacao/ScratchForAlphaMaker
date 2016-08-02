@@ -553,6 +553,8 @@
 		index = data.indexOf('\r', valS1_index);
 		portsValue[0] = data.substring(valS1_index, index);
 		
+		console.log('Valor puro:'+ portsValue[0] );
+		
 		//Get S2
 		index = data.indexOf('\r', idS2_index);
 		portsID[1] = data.substring(idS2_index, index);
