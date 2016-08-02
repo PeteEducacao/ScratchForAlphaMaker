@@ -552,6 +552,8 @@
 		portsID[0] = data.substring(idS1_index, index);
 		index = data.indexOf('\r', valS1_index);
 		portsValue[0] = data.substring(valS1_index, index);
+		if (portsValue[0]=='k') 
+			portsValue[0]=0;
 		
 		console.log('Valor puro:'+ portsValue[0] );
 		
@@ -560,18 +562,24 @@
 		portsID[1] = data.substring(idS2_index, index);
 		index = data.indexOf('\r', valS2_index);
 		portsValue[1] = data.substring(valS2_index, index);
+		if (portsValue[1]=='k') 
+			portsValue[1]=0;
 		
 		//Get S3
 		index = data.indexOf('\r', idS3_index);
 		portsID[2] = data.substring(idS3_index, index);
 		index = data.indexOf('\r', valS3_index);
 		portsValue[2] = data.substring(valS3_index, index);
+		if (portsValue[2]=='k') 
+			portsValue[2]=0;
 		
 		//Get S4
 		index = data.indexOf('\r', idS4_index);
 		portsID[3] = data.substring(idS4_index, index);
 		index = data.indexOf('\r', valS4_index);
 		portsValue[3] = data.substring(valS4_index, index);
+		if (portsValue[3]=='k') 
+			portsValue[3]=0;
 		
 		while(true){
 			var pIndex = data.indexOf('P', pIndex);
