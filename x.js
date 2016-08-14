@@ -721,10 +721,6 @@
 		var getDeviceInformation = new Uint8Array(3);
 		
 		var sendFinish = new Uint8Array(3);
-		sendFinish[0] = 77; //M
-		sendFinish[1] = 102; //f
-		sendFinish[2] = 13; //\r
-		device.send(sendFinish.buffer);
 		
 		getDeviceInformation[0]= 77; //M;
 		getDeviceInformation[1]= 110; //n;
@@ -828,6 +824,17 @@
     		if (pair.length > 1 && pair[0]=='lang')
       		lang = pair[1];
 	}
+	
+	function nunca_chamada () {
+  		console.log("Voce nao deve executar esta funcao!");
+	}
+
+	var timeout1 = setTimeout(nunca_chamada,1000);
+	console.log("rodou!");
+	//var interval1 = setInterval(nunca_chamada,1000);
+
+	//clearTimeout(timeout1);
+	//clearInterval(interval1);
 	
 	//Block and block menu descriptions
 	var menus = {
