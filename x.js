@@ -769,7 +769,13 @@
 			comPoller = clearInterval(comPoller);
 		if(comWatchdog)
 			comWatchdog = clearInterval(comWatchdog);
+		if(Watchdog)
+			Watchdog = clearTimeout(Watchdog);
 		device = null;
+		poller = null;
+		comPoller = null;
+		comWatchdog = null;
+		Watchdog = null;
 	}
 
 	ext._shutdown = function(){
@@ -794,7 +800,13 @@
 			comPoller = clearInterval(comPoller);
 		if(comWatchdog)
 			comWatchdog = clearInterval(comWatchdog);
+		if(Watchdog)
+			Watchdog = clearTimeout(Watchdog);
 		device = null;
+		poller = null;
+		comPoller = null;
+		comWatchdog = null;
+		Watchdog = null;
 	}
 
 	ext._getStatus = function(){
@@ -886,7 +898,7 @@
 		  [' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'Forward', 0],
 		  [' ', 'Stop motor %m.motor', 'stopMotor', 'ME'],
 		  ['-'],
-		  ['w', 'Play musical note %m.notes for %n seconds', 'playNoteTime', 'c', 1],
+		  ['w', 'Play musical note %m.note for %n seconds', 'playNoteTime', 'c', 1],
 		  [' ', 'Play musical note %m.notes', 'playNote', 'C'],
 		  [' ', 'Mute', 'mute'],
 		  [' ', '%m.comportamentoLuz  the light', 'sigaFujaFaixa','Follow'],
@@ -932,7 +944,7 @@
 		  [' ', 'Servo %m.servos %n °', 'setServo', 'SV1', 0],
 		  [' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'frente', 0],
 		  [' ', 'Pare motor %m.motor', 'stopMotor', 'ME'],
-		  ['-'],
+		  ['-'], 
 		  ['w', 'Tocar a nota %m.notes por %n segundos', 'playNoteTime', 'Dó', 1],
 		  [' ', 'Tocar a nota %m.notes', 'playNote', 'Dó'],
 		  [' ', 'Mudo', 'mute'],
