@@ -886,7 +886,7 @@
 		  [' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'Forward', 0],
 		  [' ', 'Stop motor %m.motor', 'stopMotor', 'ME'],
 		  ['-'],
-		  ['w', 'Play musical note %m.notes for %n seconds', 'playNoteTime', 'c', 1],
+		  ['w', 'Play musical note %m.note for %n seconds', 'playNoteTime', 'c', 1],
 		  [' ', 'Play musical note %m.notes', 'playNote', 'C'],
 		  [' ', 'Mute', 'mute'],
 		  [' ', '%m.comportamentoLuz  the light', 'sigaFujaFaixa','Follow'],
