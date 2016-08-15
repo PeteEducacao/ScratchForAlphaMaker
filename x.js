@@ -493,8 +493,7 @@
 	//Convert the value to Lux
 	function convertToLux(val){
 		console.log('valor '+val);
-		return val;
-		//return Math.round(50 * val / (2700000 / 127 *0.00076725)) / 10;
+		return Math.round(50 * val / (2700000 / 127 *0.00076725)) / 10;
 	}
 	
 	//Convert the value to dB
@@ -521,8 +520,6 @@
 	 	
 	 	if(data.indexOf('K') == -1)
 	 		return false;
-	 		
-	 	//console.log(data);
 	 	
 	 	//IDs
 		var idS1_index = data.indexOf('A');
@@ -741,7 +738,7 @@
 			device.close();
 			device = null;
 			tryNextDevice();
-		}, 2000);
+		}, 1500);
 	}
 	
 	function sleepFor( sleepDuration ){
