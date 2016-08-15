@@ -696,6 +696,7 @@
 
 	var poller = null;
 	var watchdog = null;
+	
 	function tryNextDevice(){
 	
 		//If potentialDevices is empty, device will be undefined.
@@ -725,10 +726,10 @@
 		getDeviceInformation[0]= 77; //M;
 		getDeviceInformation[1]= 110; //n;
 		getDeviceInformation[2] = 13; //\r
-		poller = setTimeout(function(){
-			console.log('Enviando Mn');
-			device.send(getDeviceInformation.buffer);
-		}, 500);
+		
+		console.log('Enviando Mn');
+		device.send(getDeviceInformation.buffer);
+		sleepFor(500);
 		
 		watchdog = setTimeout(function(){
 			console.log('Executando: Watchdog');
@@ -741,6 +742,11 @@
 			device = null;
 			tryNextDevice();
 		}, 2000);
+	}
+	
+	function sleepFor( sleepDuration ){
+    		var now = new Date().getTime();
+    		while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
 	}
 
 	 //************************************************************* 
@@ -783,11 +789,15 @@
 		 	sendFinish[1] = 102; //f
 			sendFinish[2] = 13; //\r
 			device.send(sendFinish.buffer);
+			
+			sleepFor(250);
+			
 			sendFinish[0] = 77; //M
 		 	sendFinish[1] = 102; //f
 			sendFinish[2] = 13; //\r
 			device.send(sendFinish.buffer);
-		
+			sleepFor(250);
+			
 			device.close();
 		}
 		if(poller)
@@ -825,12 +835,7 @@
       		lang = pair[1];
 	}
 	
-	function nunca_chamada () {
-  		console.log("Voce nao deve executar esta funcao!");
-	}
 
-	var timeout1 = setTimeout(nunca_chamada,1000);
-	console.log("rodou!");
 	//var interval1 = setInterval(nunca_chamada,1000);
 
 	//clearTimeout(timeout1);
