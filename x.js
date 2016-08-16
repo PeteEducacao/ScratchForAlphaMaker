@@ -705,10 +705,10 @@
 		
 		device.set_receive_handler(function(data){
 			console.log('Karalho!!!!');
-			if(!rawData)
+		//	if(!rawData)
 				rawData = new Uint8Array(data);
-			else
-				rawData = appendBuffer(rawData, data);
+		//	else
+		//		rawData = appendBuffer(rawData, data);
 
 			processData();
 		});
