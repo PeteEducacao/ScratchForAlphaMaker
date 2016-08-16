@@ -752,6 +752,7 @@
 	var potentialDevices = [];
 	
 	ext._deviceConnected = function(dev){
+		console.log('DeviceConnected  ');
 		potentialDevices.push(dev);
 		if(!device){
 			tryNextDevice();
@@ -807,10 +808,10 @@
 	
 	//************************************************************
 	
-	  // Check for GET param 'lang'
+	// Check for GET param 'lang'
   	var paramString = window.location.search.replace(/^\?|\/$/g, '');
   	var vars = paramString.split("&");
-  	var lang = 'en';
+  	var lang = 'pt';
   	for (var i=0; i<vars.length; i++) {
     		var pair = vars[i].split('=');
     		if (pair.length > 1 && pair[0]=='lang')
@@ -818,12 +819,6 @@
 	}
 	
 
-	//var interval1 = setInterval(nunca_chamada,1000);
-
-	//clearTimeout(timeout1);
-	//clearInterval(interval1);
-	
-	//Block and block menu descriptions
 	var menus = {
 		en: {
 			ports: ['S1', 'S2', 'S3', 'S4'],
