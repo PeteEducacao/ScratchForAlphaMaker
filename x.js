@@ -759,22 +759,7 @@
 	}
 	
 	ext._deviceRemoved = function(dev){
-		console.log('Executando: _deviceRemoved');
-		if(device != dev)
-			return;
-		if(poller)
-			poller = clearInterval(poller);
-		if(comPoller)
-			comPoller = clearInterval(comPoller);
-		if(comWatchdog)
-			comWatchdog = clearInterval(comWatchdog);
-		if(Watchdog)
-			Watchdog = clearTimeout(Watchdog);
-		device = null;
-		poller = null;
-		comPoller = null;
-		comWatchdog = null;
-		Watchdog = null;
+		// Not currently implemented with serial devices
 	}
 
 	ext._shutdown = function(){
@@ -813,10 +798,10 @@
 	}
 
 	ext._getStatus = function(){
-		if(!device) return{status: 1, msg: 'Disconnected'};
-		if(watchdog) return {status: 0, msg: 'Probing for ALPHA Maker'};
-		console.log('Conectado com dispositivo na porta: ' + device.id);
-		return{status: 2, msg: 'Connected'};
+		//if(!device) return{status: 0, msg: 'Não foi encontrado dispositivo conectado.'};
+		//if(watchdog) return {status: 1, msg: 'Procurando ALPHA Maker'};
+		//console.log('Conectado com dispositivo na porta: ' + device.id);
+		//return{status: 2, msg: 'Connected'};
 	
 	}
 	
