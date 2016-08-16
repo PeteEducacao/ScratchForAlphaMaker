@@ -704,6 +704,7 @@
 		console.log('Tentando conectar com dispositivo ' + device.id);
 		
 		device.set_receive_handler(function(data){
+			console.log('Karalho!!!!');
 			if(!rawData)
 				rawData = new Uint8Array(data);
 			else
