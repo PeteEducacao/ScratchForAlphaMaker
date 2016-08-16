@@ -624,7 +624,7 @@
 	//Process the data
 	function processData(){
 		var bytes = new Uint8Array(rawData);
-		console.log("Executando: processData");
+		console.log("Executando: processData 1");
 		if(watchdog){
 			console.log("Executando: processData 2");
 			//If recognized as being an ALPHA Maker
