@@ -624,10 +624,12 @@
 	//Process the data
 	function processData(){
 		var bytes = new Uint8Array(rawData);
-		
+		console.log("Executando: processData");
 		if(watchdog){
+			console.log("Executando: processData 2");
 			//If recognized as being an ALPHA Maker
 			if(checkMaker(bytes)){
+				console.log("Executando: processData 3");
 				rawData = null;
 				
 				//Stop the timers
@@ -710,7 +712,7 @@
 			processData();
 		});
 
-		//Envia Mn
+		
 		var getDeviceInformation = new Uint8Array(3);
 		
 		var sendFinish = new Uint8Array(3);
@@ -747,7 +749,7 @@
 	var potentialDevices = [];
 	
 	ext._deviceConnected = function(dev){
-		console.log('Rodando: DeviceConnected  ');
+		console.log('Rodando: DeviceConnected...  ');
 		potentialDevices.push(dev);
 		if(!device){
 			tryNextDevice();
@@ -796,7 +798,6 @@
 	ext._getStatus = function(){
 		if(!device) return{status: 0, msg: 'Não foi encontrado dispositivo conectado.'};
 		if(watchdog) return {status: 1, msg: 'Procurando ALPHA Maker...'};
-		console.log('Conectado com dispositivo na porta: ' + device.id);
 		return{status: 2, msg: 'Connected'};
 	}
 	
