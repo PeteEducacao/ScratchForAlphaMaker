@@ -492,7 +492,6 @@
 	
 	//Convert the value to Lux
 	function convertToLux(val){
-		console.log('valor '+val);
 		return Math.round(50 * val / (2700000 / 127 *0.00076725)) / 10;
 	}
 	
@@ -551,8 +550,6 @@
 		portsValue[0] = data.substring(valS1_index, index);
 		if (portsValue[0]=='K') 
 			portsValue[0]=0;
-		
-		console.log('Valor puro:'+ portsValue[0] );
 		
 		//Get S2
 		index = data.indexOf('\r', idS2_index);
@@ -696,8 +693,6 @@
 	
 	function tryNextDevice(){
 	
-		//If potentialDevices is empty, device will be undefined.
-		//That will get us back here next time a device is connected.
 		console.log("Executando: tryNextDevice");
 		
 		device = potentialDevices.shift();
@@ -752,7 +747,7 @@
 	var potentialDevices = [];
 	
 	ext._deviceConnected = function(dev){
-		console.log('DeviceConnected  ');
+		console.log('Rodando: DeviceConnected  ');
 		potentialDevices.push(dev);
 		if(!device){
 			tryNextDevice();
