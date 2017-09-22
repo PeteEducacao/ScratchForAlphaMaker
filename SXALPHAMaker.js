@@ -628,9 +628,10 @@
 	}
 	
 	//Trata os dados recebidos
-	function processData(){
+	function TrataDados(){
 		var bytes = new Uint8Array(rawData);
 		
+		console.log('Trata os dados recebidos!');
 		if(watchdog){
 			//If recognized as being an ALPHA Maker
 			if(checkMaker(bytes)){
@@ -717,7 +718,7 @@
 			else
 				rawData = appendBuffer(rawData, data);
             console.log('Recebido: ' + data.byteLength);
-			processData();
+			TrataDados();
 		});
 
 		
