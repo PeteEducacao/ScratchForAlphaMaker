@@ -943,6 +943,7 @@
 		]
 	};
 	
+	// SOS
 	var descriptor = {
 		blocks: blocks[lang],
     		menus: menus[lang],
