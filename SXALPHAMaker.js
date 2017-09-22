@@ -703,8 +703,10 @@
 		console.log("Executando: tryNextDevice");
 		
 		device = potentialDevices.shift();
+		console.log('Teste 01');
 		if(!device)
 			return;
+		console.log('Teste 02');
 		device.open({stopBits: 0, bitRate: 9600, ctsFlowControl: 0});
 		console.log('Tentando conectar com dispositivo ' + device.id);
 		
@@ -949,6 +951,8 @@
     		menus: menus[lang],
 		url: 'http://PeteEducacao.github.io/ScratchForAlphaMaker'
 	};
+	
+	// Descricao do hardware
 	
 	ScratchExtensions.register('ALPHA Maker', descriptor, ext,{type: 'serial'});
 })({});
