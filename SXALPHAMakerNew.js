@@ -723,25 +723,6 @@
 		});
 
 		
-		var getDeviceInformation = new Uint8Array(3);
-		
-		// Envia Mf >> volta para o modo conectado
-		var sendFinish = new Uint8Array(3);
-		sendFinish[0] = 77; //M
-		sendFinish[1] = 102; //f
-		sendFinish[2] = 13; //\r
-		console.log('Enviando Mf');
-		device.send(sendFinish.buffer);
-		
-		//Envia Mn >> identificar a placa
-		getDeviceInformation[0]= 77; //M;
-		getDeviceInformation[1]= 110; //n;
-		getDeviceInformation[2] = 13; //\r
-		poller = setTimeout(function(){
-			console.log('Enviando Mn');
-			device.send(getDeviceInformation.buffer);
-		}, 500);
-		
 		watchdog = setTimeout(function(){
 			console.log('Executando: Watchdog');
 			//This device didn't get good data in time, so give up on it. Clean up and then move on.
@@ -752,7 +733,7 @@
 			device.close();
 			device = null;
 			tryNextDevice();
-		}, 2000);
+		}, 5000);
 	}
 
 	 //************************************************************* 
