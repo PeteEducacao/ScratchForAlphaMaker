@@ -949,7 +949,7 @@
 		]
 	};
 	
-	// SOS
+	// SOS 2
 	var descriptor = {
 		blocks: blocks[lang],
     		menus: menus[lang],
