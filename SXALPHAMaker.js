@@ -705,14 +705,15 @@
 		console.log("Executando: tryNextDevice");
 		
 		device = potentialDevices.shift();
-		console.log('Teste 01');
+
 		if(!device)
 			return;
-		console.log('Teste 02');
+
 		device.open({stopBits: 0, bitRate: 9600, ctsFlowControl: 0});
 		console.log('Tentando conectar com dispositivo ' + device.id);
 		
 		device.set_receive_handler(function(data){
+			console.log('Recebido: ' + data);
 			if(!rawData)
 				rawData = new Uint8Array(data);
 			else
@@ -724,11 +725,12 @@
 		
 		var getDeviceInformation = new Uint8Array(3);
 		
-		// ENvia Mf >> volta para o modo conectado
+		// Envia Mf >> volta para o modo conectado
 		var sendFinish = new Uint8Array(3);
 		sendFinish[0] = 77; //M
 		sendFinish[1] = 102; //f
 		sendFinish[2] = 13; //\r
+		console.log('Enviando Mf');
 		device.send(sendFinish.buffer);
 		
 		//Envia Mn >> identificar a placa
@@ -754,8 +756,8 @@
 	}
 
 	 //************************************************************* 
-	 // FUNÇÕES DO SISTEMA
-	
+	 // FUNÇÕES DO SISTEMA QUE MONITORA OS DISPOSITIVOS SERIAIS CONECTADOS
+	 
 	var potentialDevices = [];
 	
 	ext._deviceConnected = function(dev){
