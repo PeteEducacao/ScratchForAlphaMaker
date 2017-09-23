@@ -804,17 +804,17 @@
 	}
 
 	ext._getStatus = function(){
-		cconsole.log('Executando: _getStatus');
-		if(!device) return{status: 0, msg: 'Não há dispositivos conectados.'};
-		if(watchdog) return {status: 1, msg: 'Identificando placa ALPHA Maker'};
+		console.log('Teste ');
+		if(!device) return{status: 1, msg: 'Disconnected'};
+		if(watchdog) return {status: 0, msg: 'Probing for ALPHA Maker'};
 		console.log('Conectado com dispositivo na porta: ' + device.id);
-		return{status: 2, msg: 'ALPHA Maker conectada!'};
+		return{status: 2, msg: 'Connected'};
 	
 	}
 	
 	//************************************************************
 	
-	// Verifica o parametro de escolha de idioma.
+	  // Check for GET param 'lang'
   	var paramString = window.location.search.replace(/^\?|\/$/g, '');
   	var vars = paramString.split("&");
   	var lang = 'en';
@@ -824,7 +824,7 @@
       		lang = pair[1];
 	}
 	
-	// Definição dos Blocos
+	//Block and block menu descriptions
 	var menus = {
 		en: {
 			ports: ['S1', 'S2', 'S3', 'S4'],
@@ -949,7 +949,7 @@
 		]
 	};
 	
-
+	// SOS 2
 	var descriptor = {
 		blocks: blocks[lang],
     		menus: menus[lang],
