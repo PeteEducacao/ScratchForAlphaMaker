@@ -807,7 +807,7 @@
 	}
 
 	ext._getStatus = function(){
-		console.log('Teste ');
+		console.log('Executando: _getStatus ');
 		if(!device) return{status: 0, msg: 'Sem dispositivo.'};
 		if(watchdog) return {status: 1, msg: 'Procurando uma ALPHA Maker.'};
 		console.log('Conectado com dispositivo na porta: ' + device.id);
