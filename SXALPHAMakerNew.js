@@ -722,7 +722,7 @@
 			TrataDados();
 		});
 
-		
+		console.log("antes");
 		watchdog = setTimeout(function(){
 			console.log('Executando: Watchdog');
 			//This device didn't get good data in time, so give up on it. Clean up and then move on.
