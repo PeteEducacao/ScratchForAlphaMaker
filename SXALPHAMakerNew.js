@@ -733,7 +733,7 @@
 			device.close();
 			device = null;
 			tryNextDevice();
-		}, 20000);
+		}, 5000);
 		
 		console.log("Aqui");
 		
