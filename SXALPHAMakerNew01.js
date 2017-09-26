@@ -823,6 +823,8 @@
 		if (debugLevel >= 2)
 			console.log('Executando: _getStatus ');
 		
+		console.log('V x ');
+		
 		if(!device) return{status: 0, msg: 'Sem dispositivo.'};
 		if(watchdog) return {status: 1, msg: 'Procurando uma ALPHA Maker.'};
 		
