@@ -684,6 +684,7 @@
 						clearInterval(comWatchdog);
 						comWatchdog = null;
 						
+            console.log('Watchdog 2? ');
 						device.set_receive_handler(null);
 						device.close();
 						device = null;
@@ -706,7 +707,7 @@
 	var poller = null;
 	var watchdog = null;
 	function tryNextDevice(){
-		console.log("v 48");
+		console.log("v 50");
 		
 		if (debugLevel >= 2)
 			console.log("Executando: tryNextDevice");
