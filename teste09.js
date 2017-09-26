@@ -176,7 +176,7 @@
     };
 
     ext._getStatus = function() {
-		console.log('V-6');
+		console.log('V-9');
         if(!device) return {status: 1, msg: 'PicoBoard disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for PicoBoard'};
         return {status: 2, msg: 'PicoBoard connected'};
@@ -196,5 +196,5 @@
         },
         url: '/info/help/studio/tips/ext/PicoBoard/'
     };
-    ScratchExtensions.register('PicoBoard', descriptor, ext, {type: 'serial'});
+    ScratchExtensions.register('ALPHAMaker', descriptor, ext, {type: 'serial'});
 })({});
