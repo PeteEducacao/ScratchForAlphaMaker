@@ -130,9 +130,8 @@
         if (!device) return;
 
         device.open({ stopBits: 0, bitRate: 9600, ctsFlowControl: 0 });
-        
-        console.log('Tentando conectar com dispositivo ' + device.id);
-        
+		console.log('Tentando conectar com dispositivo ' + device.id);
+		
         device.set_receive_handler(function(data) {
             console.log('Received: ' + data.byteLength);
             if(!rawData || rawData.byteLength == 18) rawData = new Uint8Array(data);
@@ -176,8 +175,8 @@
     };
 
     ext._getStatus = function() {
-		console.log('V-8');
-        if(!device) return {status: 0, msg: 'PicoBoard disconnected'};
+		console.log('V-4');
+        if(!device) return {status: 1, msg: 'PicoBoard disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for PicoBoard'};
         return {status: 2, msg: 'PicoBoard connected'};
     }
@@ -196,9 +195,5 @@
         },
         url: '/info/help/studio/tips/ext/PicoBoard/'
     };
-    
-    // Descricao do hardware	
-   
     ScratchExtensions.register('PicoBoard', descriptor, ext, {type: 'serial'});
-
 })({});
