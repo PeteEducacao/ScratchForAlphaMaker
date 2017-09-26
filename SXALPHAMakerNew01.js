@@ -706,7 +706,7 @@
 	var poller = null;
 	var watchdog = null;
 	function tryNextDevice(){
-		console.log("v 47");
+		console.log("v 48");
 		
 		if (debugLevel >= 2)
 			console.log("Executando: tryNextDevice");
@@ -729,6 +729,13 @@
 		if (debugLevel >= 1)
 			console.log('Tentando conectar com dispositivo ' + device.id);
 		
+ 		 	var sendMn = new Uint8Array(4);
+			sendMn[0] = 77; //M
+		 	sendMn[1] = 110; //f
+			sendMn[2] = 13; //\r
+      sendMn[3] = 10; //\r
+			device.send(sendMn.buffer);
+    
 		//device.set_receive_handler(function(data){
 		//	if (debugLevel >= 1)
 		//		console.log('Recebido: ' + data);
