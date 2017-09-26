@@ -706,9 +706,8 @@
 	var poller = null;
 	var watchdog = null;
 	function tryNextDevice(){
-	
-		//If potentialDevices is empty, device will be undefined.
-		//That will get us back here next time a device is connected.
+		console.log("v 41");
+		
 		if (debugLevel >= 2)
 			console.log("Executando: tryNextDevice");
 		
