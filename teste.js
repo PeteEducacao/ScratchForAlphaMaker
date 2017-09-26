@@ -175,6 +175,7 @@
     };
 
     ext._getStatus = function() {
+		console.log('V-2');
         if(!device) return {status: 0, msg: 'PicoBoard disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for PicoBoard'};
         return {status: 2, msg: 'PicoBoard connected'};
