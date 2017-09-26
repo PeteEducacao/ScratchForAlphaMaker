@@ -717,14 +717,14 @@
 		if(!device)
 			return;
 
-		//device.open({stopBits: 1, bitRate: 9600, ctsFlowControl: 0});
+		device.open({stopBits: 1, bitRate: 9600, ctsFlowControl: 0});
 		
 		
 		
-	    device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
-	      device.set_receive_handler(function(data) {
+	    	//device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
+	      	device.set_receive_handler(function(data) {
   			if (debugLevel >= 1)
-              	console.log('Dado Recebido!');  
+              			console.log('Dado Recebido!');  
 			//TrataDados();
 	        //processInput(new Uint8Array(data));
 	      });
