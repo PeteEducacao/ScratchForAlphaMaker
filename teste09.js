@@ -130,8 +130,9 @@
         if (!device) return;
 
         device.open({ stopBits: 0, bitRate: 9600, ctsFlowControl: 0 });
-	console.log('Tentando conectar com dispositivo ' + device.id);
-		
+        
+        console.log('Tentando conectar com dispositivo ' + device.id);
+        
         device.set_receive_handler(function(data) {
             console.log('Received: ' + data.byteLength);
             if(!rawData || rawData.byteLength == 18) rawData = new Uint8Array(data);
@@ -175,7 +176,7 @@
     };
 
     ext._getStatus = function() {
-		console.log('V-9');
+		console.log('V-6');
         if(!device) return {status: 1, msg: 'PicoBoard disconnected'};
         if(watchdog) return {status: 1, msg: 'Probing for PicoBoard'};
         return {status: 2, msg: 'PicoBoard connected'};
