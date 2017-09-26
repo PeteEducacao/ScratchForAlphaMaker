@@ -707,7 +707,7 @@
 	var poller = null;
 	var watchdog = null;
 	function tryNextDevice(){
-		console.log("v 51");
+		console.log("v 52");
 		
 		if (debugLevel >= 2)
 			console.log("Executando: tryNextDevice");
