@@ -674,7 +674,7 @@
 			
 				//Set a timer to check if the connection is still active
 				active = true;
-				comWatchdog = setInterval(function(){
+				/*comWatchdog = setInterval(function(){
 					if(active)
 						active = false
 					else{
@@ -689,7 +689,7 @@
 						device = null;
 						tryNextDevice();
 					}
-				}, 1500);
+				}, 1500);*/
 			}
 		}
 		
@@ -706,7 +706,7 @@
 	var poller = null;
 	var watchdog = null;
 	function tryNextDevice(){
-		console.log("v 45");
+		console.log("v 46");
 		
 		if (debugLevel >= 2)
 			console.log("Executando: tryNextDevice");
@@ -743,7 +743,7 @@
 		//	TrataDados();
 		// });
 
-		
+		/*
 		watchdog = setTimeout(function(){
 			if (debugLevel >= 2)
 				console.log('Executando: Watchdog');
@@ -756,7 +756,7 @@
 			device.close();
 			device = null;
 			tryNextDevice();
-		}, 5000);
+		}, 5000);*/
 		
 	}
 
