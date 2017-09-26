@@ -895,7 +895,7 @@
 		}
 	};
 	
-	var blocks = {
+	var blo cks = {
 		en: [
 		  ['h', 'Event %b', 'event', 0], 
 		  [' ', 'Connect  %m.sensors sensor on  %m.ports port', 'connectSensor', ' ', 'S1'],
