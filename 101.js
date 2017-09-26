@@ -100,6 +100,7 @@
   }
 
   function tryNextDevice() {
+    return;
     device = potentialDevices.shift();
     if (!device) return;
     device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
