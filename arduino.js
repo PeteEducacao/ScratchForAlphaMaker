@@ -459,7 +459,7 @@ new (function () {
         }
         // did not find an entry in the array
         createAlert(18, board, pin);
-        ext._shutdown();
+        wah._shutdown();
     }
 
     // This function will format a set input pin message (analog or digital) and send it to the server

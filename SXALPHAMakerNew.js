@@ -11,6 +11,9 @@
 	var portsSelectedSensor = new Array(4);
 	var pinsValues = new Uint16Array(22);
 	
+    // Variavel para controlar o envio de menssagens de debug.
+    var debugLevel = 2;
+	
 	
 	//Event block, can be used with any condition
 	ext.event = function(condition){
@@ -607,7 +610,8 @@
 	function checkMaker(bytes){
 		var data = String.fromCharCode.apply(null, bytes);
 		
-		console.log('Dados: ' + data);
+		if (debugLevel >= 2)
+			console.log('Dados: ' + data);
 		
 		var t_index = data.indexOf('t');
 		var l_index = data.indexOf('l');
@@ -631,7 +635,9 @@
 	function TrataDados(){
 		var bytes = new Uint8Array(rawData);
 		
-		console.log('Trata os dados recebidos!');
+		if (debugLevel >= 2)
+			console.log('Trata os dados recebidos!');
+		
 		if(watchdog){
 			//If recognized as being an ALPHA Maker
 			if(checkMaker(bytes)){
@@ -651,7 +657,8 @@
 				startAcquisition[3] = 48; //0
 				startAcquisition[4] = 13; //\r
 				
-				console.log('Inicia Aquisicao!');
+				if (debugLevel >= 1)
+					console.log('Inicia Aquisicao!');
 				device.send(startAcquisition.buffer);
 				
 				//Set a timer to request the data
@@ -702,29 +709,49 @@
 	
 		//If potentialDevices is empty, device will be undefined.
 		//That will get us back here next time a device is connected.
-		console.log("Executando: tryNextDevice");
+		if (debugLevel >= 2)
+			console.log("Executando: tryNextDevice");
 		
 		device = potentialDevices.shift();
 
 		if(!device)
 			return;
 
-		device.open({stopBits: 1, bitRate: 9600, ctsFlowControl: 0});
-		console.log('Tentando conectar com dispositivo ' + device.id);
+		//device.open({stopBits: 1, bitRate: 9600, ctsFlowControl: 0});
 		
-		device.set_receive_handler(function(data){
-			console.log('Recebido: ' + data);
-			if(!rawData)
-				rawData = new Uint8Array(data);
-			else
-				rawData = appendBuffer(rawData, data);
-            console.log('Recebido: ' + data.byteLength);
-			TrataDados();
-		});
+		
+		
+	    device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
+	      device.set_receive_handler(function(data) {
+  			if (debugLevel >= 1)
+              	console.log('Dado Recebido!');  
+			//TrataDados();
+	        //processInput(new Uint8Array(data));
+	      });
+	    });
+		
+		if (debugLevel >= 1)
+			console.log('Tentando conectar com dispositivo ' + device.id);
+		
+		//device.set_receive_handler(function(data){
+		//	if (debugLevel >= 1)
+		//		console.log('Recebido: ' + data);
+		//	if(!rawData)
+		//		rawData = new Uint8Array(data);
+		//	else
+		//		rawData = appendBuffer(rawData, data);
+		//	
+		//	if (debugLevel >= 1)
+        //    	console.log('Recebido: ' + data.byteLength);
+		//	
+		//	TrataDados();
+		// });
 
-		console.log("antes");
+		
 		watchdog = setTimeout(function(){
-			console.log('Executando: Watchdog');
+			if (debugLevel >= 2)
+				console.log('Executando: Watchdog');
+			
 			//This device didn't get good data in time, so give up on it. Clean up and then move on.
 			//If we get good data then we'll terminate this watchdog.
 			clearInterval(poller);
@@ -735,8 +762,6 @@
 			tryNextDevice();
 		}, 5000);
 		
-		console.log("Aqui");
-		
 	}
 
 	 //************************************************************* 
@@ -745,7 +770,9 @@
 	var potentialDevices = [];
 	
 	ext._deviceConnected = function(dev){
-		console.log('Executando: _deviceConnected');
+		if (debugLevel >= 2)
+			console.log('Executando: _deviceConnected');
+		
 		potentialDevices.push(dev);
 		if(!device){
 			tryNextDevice();
@@ -753,7 +780,9 @@
 	}
 	
 	ext._deviceRemoved = function(dev){
-		console.log('Executando: _deviceRemoved');
+		if (debugLevel >= 2)
+			console.log('Executando: _deviceRemoved');
+		
 		if(device != dev)
 			return;
 		if(poller)
@@ -766,7 +795,8 @@
 	}
 
 	ext._shutdown = function(){
-		console.log('Executando: _shutdown');
+		if (debugLevel >= 2)
+			console.log('Executando: _shutdown');
 
 		if(device){
 		 	var sendFinish = new Uint8Array(3);
@@ -791,10 +821,15 @@
 	}
 
 	ext._getStatus = function(){
-		console.log('Executando: _getStatus ');
+		if (debugLevel >= 2)
+			console.log('Executando: _getStatus ');
+		
 		if(!device) return{status: 0, msg: 'Sem dispositivo.'};
 		if(watchdog) return {status: 1, msg: 'Procurando uma ALPHA Maker.'};
-		console.log('Conectado com dispositivo na porta: ' + device.id);
+		
+		if (debugLevel >= 1)
+			console.log('Conectado com dispositivo na porta: ' + device.id);
+		
 		return{status: 2, msg: 'ALPHA Maker conectada!'};
 	
 	}
