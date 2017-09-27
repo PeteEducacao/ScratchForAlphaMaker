@@ -100,7 +100,7 @@
   }
 
   function tryNextDevice() {
- 		console.log("v 4");
+ 		console.log("v 5");
 
     return;
     device = potentialDevices.shift();
