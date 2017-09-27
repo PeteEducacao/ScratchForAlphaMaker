@@ -632,7 +632,7 @@
 	}
 	
 	//Trata os dados recebidos
-	function TrataDados(){
+	function processData(){
 		var bytes = new Uint8Array(rawData);
 		
 		if (debugLevel >= 2)
