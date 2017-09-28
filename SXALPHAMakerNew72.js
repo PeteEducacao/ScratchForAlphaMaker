@@ -802,9 +802,8 @@
 
 	function pingDevice() {
 		console.log("pinging");
-		
 
-		device.send(stringToArrayBuffer("ping\r"));
+		device.send(stringToArrayBuffer("Ma10\r"));
 	}
 
 	 //************************************************************* 
