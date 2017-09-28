@@ -26,10 +26,7 @@
 		return false;
 	}
 
-	//Connect a sensor to a port
-	ext.connectSensor = function(sensor, port){
-	
-	}
+
 
 	function tryNextDevice() {
 		device = potentialDevices.shift();
