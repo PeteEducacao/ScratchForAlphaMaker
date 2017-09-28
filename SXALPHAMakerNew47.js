@@ -20,7 +20,7 @@
 	var debugLevel = 2;
 
 	//Event block, can be used with any condition
-	ext.event = function(condition){
+	ext.event = function(condition){ 
 		if(condition)
 			return true;
 		return false;
