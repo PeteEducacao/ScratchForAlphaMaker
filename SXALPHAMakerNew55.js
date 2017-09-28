@@ -845,7 +845,7 @@
     else return {status: 1, msg: 'Arduino disconnected'};
   };
 	
-	//************************************************************
+	//************************************************************ 
 
 //Definicao do onjunto de Blocos
 	var menus = {
