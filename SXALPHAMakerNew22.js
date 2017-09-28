@@ -25,7 +25,7 @@
 
         //processInput(new Uint8Array(data));
       });
-    });
+    }); 
 
     poller = setInterval(function() {
       pingDevice();
