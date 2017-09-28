@@ -1,5 +1,5 @@
 (function (ext) {
-	console.log("V 27"); 
+	console.log("V 27");
 
 	var potentialDevices = [];
 
