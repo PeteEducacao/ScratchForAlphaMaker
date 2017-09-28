@@ -11,7 +11,7 @@
 	var watchdog = null;
 	var poller = null;
 
-  var lastReadTime = 0;
+  var lastReadTime = 0; 
 
 	// Variavel para controlar o envio de menssagens de debug.
 	var debugLevel = 2;
