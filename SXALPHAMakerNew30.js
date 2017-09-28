@@ -11,7 +11,8 @@
 	
 	var portsValue = new Array(4);
 	var portsID = new Array(4);
-	var portsSelectedSensor = new Array(4); 
+	var portsSelectedSensor = new Array(4);
+	var pinsValues = new Uint16Array(22);
   
   
   var lastReadTime = 0;
