@@ -854,7 +854,7 @@
 			return {status: 2, msg: 'Arduino connected'};
 		}
     
-		return {status: 1, msg: 'Arduino disconnected'};
+		return {status: 1, msg: 'Arduino disconnected'}; 
   };
 	
 //	ext._getStatus = function() {
