@@ -28,7 +28,7 @@
 
 	//Connect a sensor to a port
 	ext.connectSensor = function(sensor, port){
-		
+	
 	}
 
 	function tryNextDevice() {
