@@ -1,20 +1,7 @@
 (function(ext){
   var potentialDevices = [];
-  
-	var device = null;
-	var rawData = null;
-  var lang = 'en';
-	 
-	var active = true;
-	var watchdog = null;
-	var poller = null;
-	
-	var portsValue = new Array(4);
-	var portsID = new Array(4);
-	var portsSelectedSensor = new Array(4);
-	var pinsValues = new Uint16Array(22);
-  
-  
+  var watchdog = null;
+  var poller = null;
   var lastReadTime = 0;
   var connected = false;
   var command = null;
