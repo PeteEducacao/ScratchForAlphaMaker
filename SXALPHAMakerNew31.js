@@ -19,7 +19,6 @@
 	// Variavel para controlar o envio de menssagens de debug.
 	var debugLevel = 2;
 
-
 	function tryNextDevice() {
 		device = potentialDevices.shift();
 		if (!device)
