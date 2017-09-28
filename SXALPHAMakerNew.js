@@ -632,7 +632,7 @@
 	}
 	
 	//Trata os dados recebidos
-	function processData(){
+	function TrataDados(){
 		var bytes = new Uint8Array(rawData);
 		
 		if (debugLevel >= 2)
@@ -684,12 +684,13 @@
 						clearInterval(comWatchdog);
 						comWatchdog = null;
 						
+            console.log('Watchdog 2? ');
 						device.set_receive_handler(null);
 						device.close();
 						device = null;
 						tryNextDevice();
 					}
-				}, 1500);
+				}, 5000);
 			}
 		}
 		
@@ -706,8 +707,7 @@
 	var poller = null;
 	var watchdog = null;
 	function tryNextDevice(){
-		console.log("v 42");
-		return;
+		console.log("v 53");
 		
 		if (debugLevel >= 2)
 			console.log("Executando: tryNextDevice");
@@ -717,14 +717,11 @@
 		if(!device)
 			return;
 
-		//device.open({stopBits: 1, bitRate: 9600, ctsFlowControl: 0});
-		
-		
-		
-	    device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
-	      device.set_receive_handler(function(data) {
+		device.open({stopBits: 0, bitRate: 9600, ctsFlowControl: 0}, function() {
+		//device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
+	      	device.set_receive_handler(function(data) {
   			if (debugLevel >= 1)
-              	console.log('Dado Recebido!');  
+              			console.log('Dado Recebido!');  
 			//TrataDados();
 	        //processInput(new Uint8Array(data));
 	      });
@@ -733,6 +730,15 @@
 		if (debugLevel >= 1)
 			console.log('Tentando conectar com dispositivo ' + device.id);
 		
+    
+ 		 	var sendMa = new Uint8Array(3);
+			sendMa[0] = 77; //M
+		 	sendMa[1] = 97; //a
+			sendMa[2] = 13; //\r
+      
+			device.send(sendMa.buffer);
+     
+    
 		//device.set_receive_handler(function(data){
 		//	if (debugLevel >= 1)
 		//		console.log('Recebido: ' + data);
@@ -824,8 +830,14 @@
 		if (debugLevel >= 2)
 			console.log('Executando: _getStatus ');
 		
-		if(!device) return{status: 0, msg: 'Sem dispositivo.'};
-		if(watchdog) return {status: 1, msg: 'Procurando uma ALPHA Maker.'};
+		if(!device) { 
+      console.log('GS1 ');
+      return{status: 0, msg: 'Sem dispositivo.'};
+    }
+		if(watchdog) {
+      console.log('GS2 ');
+      return {status: 1, msg: 'Procurando uma ALPHA Maker.'};
+    }
 		
 		if (debugLevel >= 1)
 			console.log('Conectado com dispositivo na porta: ' + device.id);
