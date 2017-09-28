@@ -14,8 +14,6 @@
 	var portsSelectedSensor = new Array(4);
 	var pinsValues = new Uint16Array(22);
   
-  
-  var lastReadTime = 0;
   var connected = false;
 
   
