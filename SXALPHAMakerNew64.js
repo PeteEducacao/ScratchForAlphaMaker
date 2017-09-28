@@ -843,7 +843,7 @@
 	ext._getStatus = function() {
 		if (debugLevel >= 2) {
 			console.log('Executando: _getStatus');
-		}
+		} 
 		
 //		if(!device) {
 //      return{status: 0, msg: 'Sem dispositivo.'};
