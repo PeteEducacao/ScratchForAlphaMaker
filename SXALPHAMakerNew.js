@@ -1,6 +1,7 @@
 (function(ext){
 	var device = null;
 	var rawData = null;
+  var lang = 'en';
 	 
 	var active = true;
 	var comWatchdog = null;
@@ -851,7 +852,6 @@
 	  // Verifica o parametro para escolag do idioma
   	var paramString = window.location.search.replace(/^\?|\/$/g, '');
   	var vars = paramString.split("&");
-  	var lang = 'en';
   	for (var i=0; i<vars.length; i++) {
     		var pair = vars[i].split('=');
     		if (pair.length > 1 && pair[0]=='lang')
