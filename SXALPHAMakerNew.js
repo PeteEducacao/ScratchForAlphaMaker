@@ -1,5 +1,5 @@
-(function (ext) {
-	console.log("V 35");
+(function (ext) { 
+	console.log("V 100");
 
 	var potentialDevices = [];
 
@@ -14,6 +14,7 @@
 	var dataLost = 0;
 
   var connected = false; 
+	var found = false; 
 
 	// Variavel para controlar o envio de mensagens de debug.
 	var debugLevel = 2;
@@ -654,6 +655,13 @@
 			console.log('Trata os dados recebidos!');
 
 		if (message == "pMK2.0" && !connected) {
+			found = true;
+		}
+		else if (!connected && found && message=="Mnf") {
+			sendDevice("Ms10\r");
+			found = false;
+		}
+		else if (message == "Msk" && !connected) {
 			connected = true;
 
 			//Stop the timers
@@ -661,8 +669,6 @@
 			watchdog = null;
 			clearInterval(poller);
 			poller = null;
-
-			device.send(stringToArrayBuffer("Ms10\r"));
 
 			if (debugLevel >= 1)
 				console.log('Inicia Aquisicao!');
@@ -678,22 +684,33 @@
 						device.set_receive_handler(null);
 						device.close();
 						device = null;
-						tryNextDevice();	
+						found = false;
+						connected = false;
+						tryNextDevice();
 					}
-					else if (datalost>2) {
-						device.send(stringToArrayBuffer("MV\r"));
+					else if (dataLost>2) {
+						sendDevice("MV\r");
+						dataLost++;
 					}
 					else {
 						dataLost++;
 					}
 				}
 			}, 1000);
-			return;
+				
+			sendDevice("MV\r");
 		}
-		
-		if (message == "K") {
-			device.send("MV\r");
+		else if (connected) {
+			if (message == "K") {
+				sendDevice("MV\r");
+			}
 		}
+	}
+
+	function sendDevice(s) {
+		if (debugLevel >= 2)
+			console.log('Dado Enviado: '+s);
+		device.send(stringToArrayBuffer(s));
 	}
 
 	function stringToArrayBuffer(str){
@@ -727,11 +744,19 @@
   			if (debugLevel >= 1)
      			console.log('Dado Recebido: '+arrayBufferToString(data));
 				
-				TrataDados(arrayBufferToString(myTrim(data)));
+				
+					var dataString = arrayBufferToString(data);
+					var message = "";
+
+					while (dataString.indexOf("\n")>=0) {
+						message = dataString.substr(0,dataString.indexOf("\n"));
+						dataString = dataString.substr(dataString.indexOf("\n")+1);
+						TrataDados(myTrim(message));
+					}
 	      });
 	    });
 		
-		device.send(stringToArrayBuffer("Mn\r"));
+		sendDevice("Mn\r");
 		
 		if (debugLevel >= 1)
 			console.log('Tentando conectar com dispositivo ' + device.id);
@@ -762,6 +787,9 @@
 			device.set_receive_handler(null);
 			device.close();
 			device = null;
+			found = false;
+			connected = false;
+			
 			tryNextDevice();
 		}, 5000);
 		
@@ -776,6 +804,9 @@
 		
 		potentialDevices.push(dev);
 		if(!device){
+			found = false;
+			connected = false;
+			
 			tryNextDevice();
 		}
 	}
