@@ -5,7 +5,7 @@
 
 	var device = null;
 	var rawData = null;
-	var lang = 'en';
+	var lang = 'en'; 
 
 	var active = true;
 	var watchdog = null;
