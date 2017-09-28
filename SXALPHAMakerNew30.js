@@ -9,7 +9,9 @@
 	var watchdog = null;
 	var poller = null;
 	
-	var portsValue = new Array(4);   
+	var portsValue = new Array(4);
+	var portsID = new Array(4);
+  
   
   var lastReadTime = 0;
   var connected = false;
