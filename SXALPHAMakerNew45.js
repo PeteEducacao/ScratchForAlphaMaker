@@ -707,7 +707,7 @@
 		}
 	}
 
-	function tryNextDevice(){
+	function tryNextDevice(){ 
 		console.log("v 53");
 		
 		if (debugLevel >= 2)
