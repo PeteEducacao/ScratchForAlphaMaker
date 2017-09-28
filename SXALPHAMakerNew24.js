@@ -12,16 +12,15 @@
 	var portsSelectedSensor = new Array(4);
 	var pinsValues = new Uint16Array(22);
 	
-    // Variavel para controlar o envio de menssagens de debug.
-    var debugLevel = 2;
-	
-	
-	//Event block, can be used with any condition
-	ext.event = function(condition){
-		if(condition)
-			return true;
-		return false;
-	}
+  // Variavel para controlar o envio de menssagens de debug.
+  var debugLevel = 2;
+
+  //Event block, can be used with any condition
+  ext.event = function(condition){
+    if(condition)
+      return true;
+    return false;
+  }
 	
 	//Connect a sensor to a port
 	ext.connectSensor = function(sensor, port){
