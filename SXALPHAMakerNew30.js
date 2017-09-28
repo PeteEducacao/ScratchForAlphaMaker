@@ -1,4 +1,7 @@
 (function(ext){
+  console.log("V 1")
+  
+  
   var potentialDevices = [];
   
 	var device = null;
@@ -14,25 +17,17 @@
 	var portsSelectedSensor = new Array(4);
 	var pinsValues = new Uint16Array(22);
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-	
   // Variavel para controlar o envio de menssagens de debug.
   var debugLevel = 2;
 
-  
+  //Event block, can be used with any condition
+	ext.event = function(condition){
+		if(condition)
+			return true;
+		return false;
+	}
 
   function tryNextDevice() {
- 		console.log("v 5");
-
     device = potentialDevices.shift();
     if (!device) return;
     console.log("Device: "+device.id);
