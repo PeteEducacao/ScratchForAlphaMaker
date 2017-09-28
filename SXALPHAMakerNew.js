@@ -1,4 +1,5 @@
 (function(ext){
+	console.log("V 1");
   var potentialDevices = [];
   
 	var device = null;
@@ -13,6 +14,9 @@
 	var portsID = new Array(4);
 	var portsSelectedSensor = new Array(4);
 	var pinsValues = new Uint16Array(22);
+	
+  var connected = false; 
+
 	
     // Variavel para controlar o envio de menssagens de debug.
     var debugLevel = 2;
