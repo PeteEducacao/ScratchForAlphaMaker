@@ -730,9 +730,7 @@
 	function arrayBufferToString(buffer){
 		var arr = new Uint8Array(buffer);
 		var str = String.fromCharCode.apply(String, arr);
-		if(/[\u0080-\uffff]/.test(str)){
-				throw new Error("this string seems to contain (still encoded) multibytes");
-		}
+
 		return str;
 	}
 
@@ -750,25 +748,16 @@
   			if (debugLevel >= 1)
      			console.log('Dado Recebido: '+arrayBufferToString(data));
 				
-			//TrataDados();
+				//TrataDados();
 	        //processInput(new Uint8Array(data));
 	      });
 	    });
 		
-		pingDevice();
+		device.send(stringToArrayBuffer("Mn\r"));
 		
 		if (debugLevel >= 1)
 			console.log('Tentando conectar com dispositivo ' + device.id);
 		
-    
-// 		 	var sendMa = new Uint8Array(3);
-//			sendMa[0] = 77; //M
-//		 	sendMa[1] = 97; //a
-//			sendMa[2] = 13; //\r
-//      
-//			device.send(sendMa.buffer);
-     
-    
 		//device.set_receive_handler(function(data){
 		//	if (debugLevel >= 1)
 		//		console.log('Recebido: ' + data);
@@ -798,12 +787,6 @@
 			tryNextDevice();
 		}, 5000);
 		
-	}
-
-	function pingDevice() {
-		console.log("pinging");
-		
-		device.send(stringToArrayBuffer("Mn\r"));
 	}
 
 	 //************************************************************* 
