@@ -17,8 +17,6 @@
   
   var lastReadTime = 0;
   var connected = false;
-  var command = null;
-  var parsingCmd = false;
 
   
   
