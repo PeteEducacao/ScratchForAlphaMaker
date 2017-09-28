@@ -15,7 +15,16 @@
 	var pinsValues = new Uint16Array(22);
   
   
+  var lastReadTime = 0;
   var connected = false;
+  var command = null;
+  var parsingCmd = false;
+  var bytesRead = 0;
+  var waitForData = 0;
+  var storedInputData = new Uint8Array(4096);
+  
+  
+  
   
   
   
