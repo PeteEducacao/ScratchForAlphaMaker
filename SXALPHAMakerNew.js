@@ -1,4 +1,6 @@
 (function(ext){
+  var potentialDevices = [];
+  
 	var device = null;
 	var rawData = null;
   var lang = 'en';
@@ -773,8 +775,6 @@
 
 	 //************************************************************* 
 	 // FUNÇÕES DO SISTEMA QUE MONITORA OS DISPOSITIVOS SERIAIS CONECTADOS
-	 
-	var potentialDevices = [];
 	
 	ext._deviceConnected = function(dev){
 		if (debugLevel >= 2)
