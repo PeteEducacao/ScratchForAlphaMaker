@@ -1,100 +1,35 @@
 (function(ext){
+  var potentialDevices = [];
+  
 	var device = null;
 	var rawData = null;
   var lang = 'en';
 	 
 	var active = true;
-	var comWatchdog = null;
-	var comPoller = null;
+	var watchdog = null;
+	var poller = null;
 	
 	var portsValue = new Array(4);
 	var portsID = new Array(4);
 	var portsSelectedSensor = new Array(4);
 	var pinsValues = new Uint16Array(22);
+  
+  
+  var connected = false;
+  
+  
+  
+  
+  
+  
+  
 	
-    // Variavel para controlar o envio de menssagens de debug.
-    var debugLevel = 2;
-	
-	
-	//Event block, can be used with any condition
-	ext.event = function(condition){
-		if(condition)
-			return true;
-		return false;
-	}
-	
-	//Connect a sensor to a port
-	ext.connectSensor = function(sensor, port){
-		switch(port){
-			case menus[lang]['ports'][0]:
-				portsSelectedSensor[0] = sensor;
-				break;
-			case menus[lang]['ports'][1]:
-				portsSelectedSensor[1] = sensor;
-				break;
-			case menus[lang]['ports'][2]:
-				portsSelectedSensor[2] = sensor;
-				break;
-			case menus[lang]['ports'][3]:
-				portsSelectedSensor[3] = sensor;
-				break;
-		}
-	}
-	
-	//Turn on/off the actuator
-	ext.setActuator = function(option, port){
-		var setMessage = new Uint8Array(5);
-		setMessage[0] = 77; //M
-		setMessage[3] = 50; //2
-		setMessage[4] = 13; //\r
-		
-		switch(option){
-			//On
-			case menus[lang]['on_off'][0]:
-				setMessage[1] = 87; //W
-				break;
-			//Off
-			case menus[lang]['on_off'][1]:
-				setMessage[1] = 119; //w
-				break;
-		}
-		
-		switch(port){
-			case menus[lang]['ports'][0]:
-				setMessage[2] = 49; //1
-				break;
-			case menus[lang]['ports'][1]:
-				setMessage[2] = 50; //2
-				break;
-			case menus[lang]['ports'][2]:
-				setMessage[2] = 51; //3
-				break;
-			case menus[lang]['ports'][3]:
-				setMessage[2] = 52; //4
-				break;
-		}
-		
-		device.send(setMessage.buffer);
-	}
-	
-	//Read the port, automatically convert the value using the selected sensor
-	ext.readPort = function(port){
-		switch(port){
-			case menus[lang]['ports'][0]:
-				port = 0;
-				break;
-			case menus[lang]['ports'][1]:
-				port = 1;
-				break;
-			case menus[lang]['ports'][2]:
-				port = 2;
-				break;
-			case menus[lang]['ports'][3]:
-				port = 3;
-	 			break;
-	 	}
+  // Variavel para controlar o envio de menssagens de debug.
+  var debugLevel = 2;
 
-  function tryNextDevice() { 
+  
+
+  function tryNextDevice() {
  		console.log("v 5");
 
     device = potentialDevices.shift();
