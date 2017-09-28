@@ -26,7 +26,7 @@
 		return false;
 	}
 
-
+ 
 
 	function tryNextDevice() {
 		device = potentialDevices.shift();
