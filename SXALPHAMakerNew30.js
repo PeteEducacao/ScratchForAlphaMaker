@@ -7,7 +7,7 @@
 	 
 	var active = true;
 	var watchdog = null;
-	var poller = null;
+	var poller = null; 
   
   
   var lastReadTime = 0;
