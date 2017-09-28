@@ -834,7 +834,7 @@
 		if(comWatchdog)
 			comWatchdog = clearInterval(comWatchdog);
 		device = null;
-	}
+	} 
 
 	ext.whenIMUEvent = function (imuEvent) {
 		return imuEventData[IMU_EVENT_SHAKE];
