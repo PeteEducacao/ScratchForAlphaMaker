@@ -327,7 +327,7 @@
 		if(motor == menus[lang]['motor'][1])
 			sendMotor[1] = 100 //d
 		
-		device.send(sendMotor.buffer);
+		device.send(sendMotor.buffer); 
 	}
 
 	function tryNextDevice() {
