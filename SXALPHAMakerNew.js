@@ -643,6 +643,10 @@
 		return false;
 	}
 	
+	function myTrim(x) {
+    return x.replace(/^\s+|\s+$/gm,'');
+	}
+	
 	//Trata os dados recebidos
 	function TrataDados(message){
 		dataLost = 0;
@@ -723,7 +727,7 @@
   			if (debugLevel >= 1)
      			console.log('Dado Recebido: '+arrayBufferToString(data));
 				
-				TrataDados(arrayBufferToString(data.trim()));
+				TrataDados(arrayBufferToString(myTrim(data)));
 	      });
 	    });
 		
