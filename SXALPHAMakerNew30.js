@@ -26,6 +26,24 @@
 		return false;
 	}
 
+	//Connect a sensor to a port
+	ext.connectSensor = function(sensor, port){
+		switch(port){
+			case menus[lang]['ports'][0]:
+				portsSelectedSensor[0] = sensor;
+				break;
+			case menus[lang]['ports'][1]:
+				portsSelectedSensor[1] = sensor;
+				break;
+			case menus[lang]['ports'][2]:
+				portsSelectedSensor[2] = sensor;
+				break;
+			case menus[lang]['ports'][3]:
+				portsSelectedSensor[3] = sensor;
+				break;
+		}
+	}
+
 	function tryNextDevice() {
 		device = potentialDevices.shift();
 		if (!device)
