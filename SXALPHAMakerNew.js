@@ -1,27 +1,32 @@
-(function(ext){
-	console.log("V 1");
-  var potentialDevices = [];
-  
+(function (ext) {
+	console.log("V 34");
+
+	var potentialDevices = [];
+
 	var device = null;
 	var rawData = null;
-  var lang = 'en';
-	 
-	var active = true;
+	var lang = 'en';
+
+	var watchdog = null;
 	var comWatchdog = null;
-	var comPoller = null;
+	var poller = null;
 	
-	var portsValue = new Array(4);
-	var portsID = new Array(4);
-	var portsSelectedSensor = new Array(4);
-	var pinsValues = new Uint16Array(22);
-	
+	var dataLost = 0;
+
   var connected = false; 
 
-	
-    // Variavel para controlar o envio de menssagens de debug.
-    var debugLevel = 2;
-	
-	
+	// Variavel para controlar o envio de mensagens de debug.
+	var debugLevel = 2;
+
+	// Verifica o parametro para escolag do idioma
+	var paramString = window.location.search.replace(/^\?|\/$/g, '');
+	var vars = paramString.split("&");
+	for (var i=0; i<vars.length; i++) {
+		var pair = vars[i].split('=');
+		if (pair.length > 1 && pair[0]=='lang')
+			lang = pair[1];
+	}
+
 	//Event block, can be used with any condition
 	ext.event = function(condition){
 		if(condition)
@@ -29,7 +34,7 @@
 		return false;
 	}
 	
-	//Connect a sensor to a port
+		//Connect a sensor to a port
 	ext.connectSensor = function(sensor, port){
 		switch(port){
 			case menus[lang]['ports'][0]:
@@ -141,7 +146,7 @@
 	ext.getColor = function(color){
 		return color;
 	}
-	
+
 	//Set pin mode to analog input. Enables the analog readings report
 	ext.setModeAnalog = function(pin){
 		pin = Math.round(pin);
@@ -333,10 +338,10 @@
 		if(motor == menus[lang]['motor'][1])
 			sendMotor[1] = 100 //d
 		
-		device.send(sendMotor.buffer);
+		device.send(sendMotor.buffer); 
 	}
 	
-	//Play a note for certain amount of time
+		//Play a note for certain amount of time
 	ext.playNoteTime = function(note, time, callback){
 		ext.playNote(note);
 		window.setTimeout(function(){
@@ -522,8 +527,8 @@
 			val = 85;
 		return Math.round (1 / (0.000225194 * val - 0.0077244));
 	}
-
-	//************************************************************* 
+	
+		//************************************************************* 
 	
 	//Decode the received message
 	function decodeMessage(bytes){
@@ -603,7 +608,7 @@
 		return true;
 	}
 	
-	function printLog(msg){
+		function printLog(msg){
 		console.log(String.fromCharCode.apply(null, msg));
 	}
 	
@@ -639,83 +644,72 @@
 	}
 	
 	//Trata os dados recebidos
-	function TrataDados(){
-		var bytes = new Uint8Array(rawData);
-		
+	function TrataDados(message){
+		dataLost = 0;
 		if (debugLevel >= 2)
 			console.log('Trata os dados recebidos!');
-		
-		if(watchdog){
-			//If recognized as being an ALPHA Maker
-			if(checkMaker(bytes)){
-				rawData = null;
-				
-				//Stop the timers
-				clearTimeout(watchdog);
-				watchdog = null;
-				clearInterval(poller);
-				poller = null;
-				
-				//Enviar Ms  >> coloca no modo controlar
-				var startAcquisition = new Uint8Array(5);
-				startAcquisition[0] = 77; //M
-				startAcquisition[1] = 115; //s
-				startAcquisition[2] = 49; //1
-				startAcquisition[3] = 48; //0
-				startAcquisition[4] = 13; //\r
-				
-				if (debugLevel >= 1)
-					console.log('Inicia Aquisicao!');
-				device.send(startAcquisition.buffer);
-				
-				//Set a timer to request the data
-				//Enviar MV  >> informa a leitutra  das portas
-				comPoller = setInterval(function(){
-					var resend = new Uint8Array(3);
-					resend[0] = 77; //M
-					resend[1] = 86; //V
-					resend[2] = 13; //\r
-					if(device)
-						device.send(resend.buffer);
-				}, 150);
-			
-				//Set a timer to check if the connection is still active
-				active = true;
-				comWatchdog = setInterval(function(){
-					if(active)
-						active = false
-					else{
-						clearInterval(comPoller);
-						comPoller = null;
-						
+
+		if (message == "pMK2.0" && !connected) {
+			connected = true;
+
+			//Stop the timers
+			clearTimeout(watchdog);
+			watchdog = null;
+			clearInterval(poller);
+			poller = null;
+
+			device.send(stringToArrayBuffer("Ms10\r"));
+
+			if (debugLevel >= 1)
+				console.log('Inicia Aquisicao!');
+
+			//Set a timer to check if the connection is still active and re-request data if data is lost
+			comWatchdog = setInterval(function(){
+				if(connected) {
+					if (dataLost > 5) {
 						clearInterval(comWatchdog);
 						comWatchdog = null;
-						
-            console.log('Watchdog 2? ');
+
+						console.log('Conexão Perdida');
 						device.set_receive_handler(null);
 						device.close();
 						device = null;
-						tryNextDevice();
+						tryNextDevice();	
 					}
-				}, 5000);
-			}
+					else if (datalost>2) {
+						device.send(stringToArrayBuffer("MV\r"));
+					}
+					else {
+						dataLost++;
+					}
+				}
+			}, 1000);
+			return;
 		}
 		
-		//If is in acquisition mode
-		if(comPoller && comWatchdog){
-			//Decode the received message
-			if(decodeMessage(bytes)){
-				rawData = null;
-				active = true;
-			}
+		if (message == "K") {
+			device.send("MV\r");
 		}
 	}
 
-	var poller = null;
-	var watchdog = null;
+	function stringToArrayBuffer(str){
+		if(/[\u0080-\uffff]/.test(str)){
+				throw new Error("this needs encoding, like UTF-8");
+		}
+		var arr = new Uint8Array(str.length);
+		for(var i=str.length; i--; )
+				arr[i] = str.charCodeAt(i);
+		return arr.buffer;
+	}
+
+	function arrayBufferToString(buffer){
+		var arr = new Uint8Array(buffer);
+		var str = String.fromCharCode.apply(String, arr);
+
+		return str;
+	}
+
 	function tryNextDevice(){
-		console.log("v 53");
-		
 		if (debugLevel >= 2)
 			console.log("Executando: tryNextDevice");
 		
@@ -725,27 +719,19 @@
 			return;
 
 		device.open({stopBits: 0, bitRate: 9600, ctsFlowControl: 0}, function() {
-		//device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
-	      	device.set_receive_handler(function(data) {
+     	device.set_receive_handler(function(data) {
   			if (debugLevel >= 1)
-              			console.log('Dado Recebido!');  
-			//TrataDados();
-	        //processInput(new Uint8Array(data));
+     			console.log('Dado Recebido: '+arrayBufferToString(data));
+				
+				TrataDados(arrayBufferToString(data.trim()));
 	      });
 	    });
+		
+		device.send(stringToArrayBuffer("Mn\r"));
 		
 		if (debugLevel >= 1)
 			console.log('Tentando conectar com dispositivo ' + device.id);
 		
-    
- 		 	var sendMa = new Uint8Array(3);
-			sendMa[0] = 77; //M
-		 	sendMa[1] = 97; //a
-			sendMa[2] = 13; //\r
-      
-			device.send(sendMa.buffer);
-     
-    
 		//device.set_receive_handler(function(data){
 		//	if (debugLevel >= 1)
 		//		console.log('Recebido: ' + data);
@@ -831,36 +817,31 @@
 		device = null;
 	}
 
-	ext._getStatus = function(){
-		if (debugLevel >= 2)
-			console.log('Executando: _getStatus ');
+	ext.whenIMUEvent = function (imuEvent) {
+		return imuEventData[IMU_EVENT_SHAKE];
+	};
+	
+	ext._getStatus = function() {
+		if (debugLevel >= 2) {
+			console.log('Executando: _getStatus');
+		} 
 		
-		if(!device) { 
-      console.log('GS1 ');
-      return{status: 0, msg: 'Sem dispositivo.'};
+		if(!device) {
+      return {status: 1, msg: 'Sem dispositivo.'};
     }
+		
 		if(watchdog) {
-      console.log('GS2 ');
       return {status: 1, msg: 'Procurando uma ALPHA Maker.'};
     }
 		
-		if (debugLevel >= 1)
+		if (debugLevel >= 1) {
 			console.log('Conectado com dispositivo na porta: ' + device.id);
+		}
 		
-		return{status: 2, msg: 'ALPHA Maker conectada!'};
-	
-	}
+		return {status: 2, msg: 'ALPHA Maker conectada!'};
+	};
 	
 	//************************************************************
-	
-	  // Verifica o parametro para escolag do idioma
-  	var paramString = window.location.search.replace(/^\?|\/$/g, '');
-  	var vars = paramString.split("&");
-  	for (var i=0; i<vars.length; i++) {
-    		var pair = vars[i].split('=');
-    		if (pair.length > 1 && pair[0]=='lang')
-      		lang = pair[1];
-	}
 	
 	//Definicao do onjunto de Blocos
 	var menus = {
@@ -868,17 +849,17 @@
 			ports: ['S1', 'S2', 'S3', 'S4'],
 			sensors: ['Touch', 'Infrared', 'Line', 'Color', 'Light (Lux)', 'Sound (dB)', 'Temperature (°C)',
 				'Electrical Resistance (Ohm)', 'Electrical Voltage (V)', 'Ultrasonic (cm)'],
-			colors: [ 'Blue', 'Red', 'Yellow', 'Green', 'White', 'Black', 'Undefined'],
+			colors: ['Blue', 'Red', 'Yellow', 'Green', 'White', 'Black', 'Undefined'],
 			enable_disable: ['Enable', 'Disable'],
 			on_off: ['Turn on', 'Turn off'],
 			pinModes: ['imput', 'output'],
 			servos: ['SV1', 'SV2'],
 			motor: ['ME', 'MD'],
-			directions: ['Forward', 'Backward'],   
+			directions: ['Forward', 'Backward'],
 			notes: ['C', 'D flat', 'D', 'E flat', 'E', 'F', 'G flat', 'G', 'A flat', 'A', 'B flat', 'B'],
-			corFaixa: ['light','dark'],
-			comportamentoLuz: ['Follow','Escape from']
-			
+			corFaixa: ['light', 'dark'],
+			comportamentoLuz: ['Follow', 'Escape from']
+
 		},
 		es: {
 			ports: ['S1', 'S2', 'S3', 'S4'],
@@ -890,10 +871,10 @@
 			pinModes: ['entrada', 'salida'],
 			servos: ['SV1', 'SV2'],
 			motor: ['ME', 'MD'],
-			directions: ['avanza', 'retrocede'],    
+			directions: ['avanza', 'retrocede'],
 			notes: ['Do', 'Re bemol', 'Re', 'Mi bemol', 'Mi', 'Fa', 'Sol bemol', 'Sol', 'La bemol', 'La', 'Si bemol', 'Si'],
-			corFaixa: ['clara','oscura'],
-			comportamentoLuz: ['Sigue','Escapa de']
+			corFaixa: ['clara', 'oscura'],
+			comportamentoLuz: ['Sigue', 'Escapa de']
 		},
 		pt: {
 			ports: ['S1', 'S2', 'S3', 'S4'],
@@ -907,94 +888,93 @@
 			motor: ['ME', 'MD'],
 			directions: ['frente', 'ré'],
 			notes: ['Dó', 'Ré bemol', 'Ré', 'Mi bemol', 'Mi', 'Fá', 'Sol bemol', 'Sol', 'Lá bemol', 'Lá', 'Sí bemol', 'Si'],
-			corFaixa: ['clara','escura'],
-			comportamentoLuz: ['Siga','Fuja']
+			corFaixa: ['clara', 'escura'],
+			comportamentoLuz: ['Siga', 'Fuja']
 		}
 	};
-	
+
 	var blocks = {
 		en: [
-		  ['h', 'Event %b', 'event', 0], 
-		  [' ', 'Connect  %m.sensors sensor on  %m.ports port', 'connectSensor', ' ', 'S1'],
-	//	  [' ', '%m.on_off cabo de luz na porta %m.ports', 'setActuator', menus['on_off'][0], menus['ports'][0]],
-		  ['r', 'Read port %m.ports', 'readPort', 'S1'],
-		  ['r', 'Color %m.colors', 'getColor', 'Blue'],
-		  ['-'],
-	//	  [' ', 'Configurar A%n como entrada analógica', 'setModeAnalog', 0],
-	//	  ['r', 'Ler A%n', 'analogRead', 0],
-	//	  [' ', 'Configurar P%n como %m.pinModes digital', 'setModePorts', 0, menus['pinModes'][0]],
-	//	  [' ', '%m.enable_disable pull-up na porta P%n', 'setPullUp', menus['enable_disable'][0], 0],
-	//	  ['r', 'Ler P%n', 'digitalRead', 0],
-	//	  [' ', '%m.on_off P%n', 'digitalWrite', menus['on_off'][0], 0],
-		  ['-'],
-		  [' ', 'Servo %m.servos %n °', 'setServo', 'SV1', 0],
-		  [' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'Forward', 0],
-		  [' ', 'Stop motor %m.motor', 'stopMotor', 'ME'],
-		  ['-'],
-		  ['w', 'Play musical note %m.notes for %n seconds', 'playNoteTime', 'c', 1],
-		  [' ', 'Play musical note %m.notes', 'playNote', 'C'],
-		  [' ', 'Mute', 'mute'],
-		  [' ', '%m.comportamentoLuz  the light', 'sigaFujaFaixa','Follow'],
-		  [' ', 'Follow %m.corFaixa line ', 'sigaFaixa','light'],	
-		  [' ', 'Stop', 'paraMotores']
+			['h', 'Event %b', 'event', 0],
+			[' ', 'Connect  %m.sensors sensor on  %m.ports port', 'connectSensor', ' ', 'S1'],
+			//	  [' ', '%m.on_off cabo de luz na porta %m.ports', 'setActuator', menus['on_off'][0], menus['ports'][0]],
+			['r', 'Read port %m.ports', 'readPort', 'S1'],
+			['r', 'Color %m.colors', 'getColor', 'Blue'],
+			['-'],
+			//	  [' ', 'Configurar A%n como entrada analógica', 'setModeAnalog', 0],
+			//	  ['r', 'Ler A%n', 'analogRead', 0],
+			//	  [' ', 'Configurar P%n como %m.pinModes digital', 'setModePorts', 0, menus['pinModes'][0]],
+			//	  [' ', '%m.enable_disable pull-up na porta P%n', 'setPullUp', menus['enable_disable'][0], 0],
+			//	  ['r', 'Ler P%n', 'digitalRead', 0],
+			//	  [' ', '%m.on_off P%n', 'digitalWrite', menus['on_off'][0], 0],
+			['-'],
+			[' ', 'Servo %m.servos %n °', 'setServo', 'SV1', 0],
+			[' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'Forward', 0],
+			[' ', 'Stop motor %m.motor', 'stopMotor', 'ME'],
+			['-'],
+			['w', 'Play musical note %m.notes for %n seconds', 'playNoteTime', 'c', 1],
+			[' ', 'Play musical note %m.notes', 'playNote', 'C'],
+			[' ', 'Mute', 'mute'],
+			[' ', '%m.comportamentoLuz  the light', 'sigaFujaFaixa', 'Follow'],
+			[' ', 'Follow %m.corFaixa line ', 'sigaFaixa', 'light'],
+			[' ', 'Stop', 'paraMotores']
 		],
-		
+
 		es: [
-		  ['h', 'Evento %b', 'event', 0],
-		  [' ', 'Conexión de sensor de %m.sensors en lo puerto %m.ports', 'connectSensor', ' ', 'S1'],
+			['h', 'Evento %b', 'event', 0],
+			[' ', 'Conexión de sensor de %m.sensors en lo puerto %m.ports', 'connectSensor', ' ', 'S1'],
 
-		  ['r', 'Leer puerto %m.ports', 'readPort', 'S1'],
-		  ['r', 'Color %m.colors', 'getColor', 'Azul'],
-		  ['-'],
+			['r', 'Leer puerto %m.ports', 'readPort', 'S1'],
+			['r', 'Color %m.colors', 'getColor', 'Azul'],
+			['-'],
 
-		  ['-'],
-		  [' ', 'Servo %m.servos %n °', 'setServo', 'SV1', 0],
-		  [' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'avanza', 0],
-		  [' ', 'Pare motor %m.motor', 'stopMotor', 'ME'],
-		  ['-'],
-		  ['w', 'Tocar la nota %m.notes durante %n segundos', 'playNoteTime', 'Do', 1],
-		  [' ', 'Tocar la nota %m.notes', 'playNote', 'Do'],
-		  [' ', 'Mudo', 'mute'],
-		  [' ', '%m.comportamentoLuz Luz', 'sigaFujaFaixa','Sigue'],
-		  [' ', 'Sigue a Linea %m.corFaixa', 'sigaFaixa','clara'],	
-		  [' ', 'Pare', 'paraMotores']
+			['-'],
+			[' ', 'Servo %m.servos %n °', 'setServo', 'SV1', 0],
+			[' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'avanza', 0],
+			[' ', 'Pare motor %m.motor', 'stopMotor', 'ME'],
+			['-'],
+			['w', 'Tocar la nota %m.notes durante %n segundos', 'playNoteTime', 'Do', 1],
+			[' ', 'Tocar la nota %m.notes', 'playNote', 'Do'],
+			[' ', 'Mudo', 'mute'],
+			[' ', '%m.comportamentoLuz Luz', 'sigaFujaFaixa', 'Sigue'],
+			[' ', 'Sigue a Linea %m.corFaixa', 'sigaFaixa', 'clara'],
+			[' ', 'Pare', 'paraMotores']
 		],
-		
-  		pt: [
-		  ['h', 'Evento %b', 'event', 0],
-		  [' ', 'Conectar sensor de %m.sensors na porta %m.ports', 'connectSensor', ' ', 'S1'],
-	//	  [' ', '%m.on_off cabo de luz na porta %m.ports', 'setActuator', menus['on_off'][0], menus['ports'][0]],
-		  ['r', 'Ler porta %m.ports', 'readPort', 'S1'],
-		  ['r', 'Cor %m.colors', 'getColor', 'Azul'],
-		  ['-'],
-	//	  [' ', 'Configurar A%n como entrada analógica', 'setModeAnalog', 0],
-	//	  ['r', 'Ler A%n', 'analogRead', 0],
-	//	  [' ', 'Configurar P%n como %m.pinModes digital', 'setModePorts', 0, menus['pinModes'][0]],
-	//	  [' ', '%m.enable_disable pull-up na porta P%n', 'setPullUp', menus['enable_disable'][0], 0],
-	//	  ['r', 'Ler P%n', 'digitalRead', 0],
-	//	  [' ', '%m.on_off P%n', 'digitalWrite', menus['on_off'][0], 0],
-		  ['-'],
-		  [' ', 'Servo %m.servos %n °', 'setServo', 'SV1', 0],
-		  [' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'frente', 0],
-		  [' ', 'Pare motor %m.motor', 'stopMotor', 'ME'],
-		  ['-'],
-		  ['w', 'Tocar a nota %m.notes por %n segundos', 'playNoteTime', 'Dó', 1],
-		  [' ', 'Tocar a nota %m.notes', 'playNote', 'Dó'],
-		  [' ', 'Mudo', 'mute'],
-		  [' ', '%m.comportamentoLuz Luz', 'sigaFujaFaixa','Siga'],
-		  [' ', 'Siga a Faixa %m.corFaixa', 'sigaFaixa','clara'],	
-		  [' ', 'Pare', 'paraMotores']
+
+		pt: [
+			['h', 'Evento %b', 'event', 0],
+			[' ', 'Conectar sensor de %m.sensors na porta %m.ports', 'connectSensor', ' ', 'S1'],
+			//	  [' ', '%m.on_off cabo de luz na porta %m.ports', 'setActuator', menus['on_off'][0], menus['ports'][0]],
+			['r', 'Ler porta %m.ports', 'readPort', 'S1'],
+			['r', 'Cor %m.colors', 'getColor', 'Azul'],
+			['-'],
+			//	  [' ', 'Configurar A%n como entrada analógica', 'setModeAnalog', 0],
+			//	  ['r', 'Ler A%n', 'analogRead', 0],
+			//	  [' ', 'Configurar P%n como %m.pinModes digital', 'setModePorts', 0, menus['pinModes'][0]],
+			//	  [' ', '%m.enable_disable pull-up na porta P%n', 'setPullUp', menus['enable_disable'][0], 0],
+			//	  ['r', 'Ler P%n', 'digitalRead', 0],
+			//	  [' ', '%m.on_off P%n', 'digitalWrite', menus['on_off'][0], 0],
+			['-'],
+			[' ', 'Servo %m.servos %n °', 'setServo', 'SV1', 0],
+			[' ', 'Motor %m.motor %m.directions %n %', 'setMotor', 'ME', 'frente', 0],
+			[' ', 'Pare motor %m.motor', 'stopMotor', 'ME'],
+			['-'],
+			['w', 'Tocar a nota %m.notes por %n segundos', 'playNoteTime', 'Dó', 1],
+			[' ', 'Tocar a nota %m.notes', 'playNote', 'Dó'],
+			[' ', 'Mudo', 'mute'],
+			[' ', '%m.comportamentoLuz Luz', 'sigaFujaFaixa', 'Siga'],
+			[' ', 'Siga a Faixa %m.corFaixa', 'sigaFaixa', 'clara'],
+			[' ', 'Pare', 'paraMotores']
 		]
 	};
-	
-	
+
 	var descriptor = {
 		blocks: blocks[lang],
-    		menus: menus[lang],
+		menus: menus[lang],
 		url: 'http://PeteEducacao.github.io/ScratchForAlphaMaker'
 	};
-	
+
 	// Descricao do hardware
-	
-	ScratchExtensions.register('ALPHA Maker', descriptor, ext,{type: 'serial'});
+
+	ScratchExtensions.register('ALPHA Maker', descriptor, ext, {type: 'serial'});
 })({});
