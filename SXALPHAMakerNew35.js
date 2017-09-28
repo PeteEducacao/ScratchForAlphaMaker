@@ -12,7 +12,7 @@
 	var poller = null;
 
   var lastReadTime = 0;
-  var connected = false;
+  var connected = false; 
 
 	// Variavel para controlar o envio de menssagens de debug.
 	var debugLevel = 2;
