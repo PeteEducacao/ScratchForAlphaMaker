@@ -19,7 +19,7 @@
 	// Variavel para controlar o envio de mensagens de debug.
 	var debugLevel = 2;
 
-	// Verifica o parametro para escolag do idioma
+	// Verifica o parametro para escolha do idioma
 	var paramString = window.location.search.replace(/^\?|\/$/g, '');
 	var vars = paramString.split("&");
 	for (var i = 0; i < vars.length; i++) {
@@ -755,25 +755,9 @@
 		if (debugLevel >= 1)
 			console.log('Tentando conectar com dispositivo ' + device.id);
 
-		//device.set_receive_handler(function(data){
-		//	if (debugLevel >= 1)
-		//		console.log('Recebido: ' + data);
-		//	if(!rawData)
-		//		rawData = new Uint8Array(data);
-		//	else
-		//		rawData = appendBuffer(rawData, data);
-		//	
-		//	if (debugLevel >= 1)
-		//    	console.log('Recebido: ' + data.byteLength);
-		//	
-		//	TrataDados();
-		// });
-
-
 		watchdog = setTimeout(function () {
 			if (debugLevel >= 2)
 				console.log('Executando: Watchdog');
-
 			//This device didn't get good data in time, so give up on it. Clean up and then move on.
 			//If we get good data then we'll terminate this watchdog.
 			clearInterval(poller);
@@ -790,7 +774,7 @@
 	}
 
 	//************************************************************* 
-	// FUNÇÕES DO SISTEMA QUE MONITORA OS DISPOSITIVOS SERIAIS CONECTADOS
+	// FUNÇÕES DO SISTEMA QUE MONITORAm OS DISPOSITIVOS SERIAIS CONECTADOS
 
 	ext._deviceConnected = function (dev) {
 		if (debugLevel >= 2)
@@ -872,7 +856,7 @@
 
 	//************************************************************
 
-	//Definicao do onjunto de Blocos
+	//Definicao do conjunto de Blocos
 	var menus = {
 		en: {
 			ports: ['S1', 'S2', 'S3', 'S4'],
