@@ -496,7 +496,7 @@
 			portsID[portIndex] = parseInt(data.substring(1));
 			console.log("Recebido("+data+") - Port(+"+portIndex+"): "+portsID[portIndex]);
 
-			return;
+			return; 
 		}
 		
 		if (data.charAt(0) >= "a" && data.charAt(0) <= "d") {
