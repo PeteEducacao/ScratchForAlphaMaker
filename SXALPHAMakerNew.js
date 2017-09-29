@@ -15,9 +15,14 @@
 
 	var connected = false;
 	var found = false;
+	
+	var portsValue = new Array(4);
+	var portsID = new Array(4);
+	var portsSelectedSensor = new Array(4);
+	var pinsValues = new Uint16Array(22);
 
 	// Variavel para controlar o envio de mensagens de debug.
-	var debugLevel = 2;
+	var debugLevel = 0;
 
 	// Verifica o parametro para escolha do idioma
 	var paramString = window.location.search.replace(/^\?|\/$/g, '');
@@ -55,38 +60,35 @@
 
 	//Turn on/off the actuator
 	ext.setActuator = function (option, port) {
-		var setMessage = new Uint8Array(5);
-		setMessage[0] = 77; //M
-		setMessage[3] = 50; //2
-		setMessage[4] = 13; //\r
+		var setMessage = "M__2";
 
 		switch (option) {
 			//On
 			case menus[lang]['on_off'][0]:
-				setMessage[1] = 87; //W
+				setMessage = setMessage.replaceAt(1,"W");
 				break;
-				//Off
+			//Off
 			case menus[lang]['on_off'][1]:
-				setMessage[1] = 119; //w
+				setMessage = setMessage.replaceAt(1,"w");
 				break;
 		}
 
 		switch (port) {
 			case menus[lang]['ports'][0]:
-				setMessage[2] = 49; //1
+				setMessage = setMessage.replaceAt(2,"1");
 				break;
 			case menus[lang]['ports'][1]:
-				setMessage[2] = 50; //2
+				setMessage = setMessage.replaceAt(2,"2");
 				break;
 			case menus[lang]['ports'][2]:
-				setMessage[2] = 51; //3
+				setMessage = setMessage.replaceAt(2,"3");
 				break;
 			case menus[lang]['ports'][3]:
-				setMessage[2] = 52; //4
+				setMessage = setMessage.replaceAt(2,"4");
 				break;
 		}
 
-		device.send(setMessage.buffer);
+		sendDevice(setMessage);
 	}
 
 	//Read the port, automatically convert the value using the selected sensor
@@ -155,16 +157,12 @@
 		if (pin > 5)
 			return;
 
-		var setMessage = new Uint8Array(5);
-		setMessage[0] = 77; //M
-		setMessage[1] = 88; //X
-		setMessage[3] = 97; //a
-		setMessage[4] = 13; //\r
+		var setMessage = "MX_a";
 
 		pin += 97;
-		setMessage[2] = pin;
+		setMessage = setMessage.replaceAt(2,String.fromCharCode(pin));
 
-		device.send(setMessage.buffer);
+		sendDevice(setMessage);
 	}
 
 	//Read analog pin
@@ -183,26 +181,23 @@
 		if (pin > 15)
 			return;
 
-		var setMessage = new Uint8Array(5);
-		setMessage[0] = 77; //M
-		setMessage[1] = 88; //X
-		setMessage[4] = 13; //\r
+		var setMessage = "MX__";
 
 		pin += 103;
-		setMessage[2] = pin;
+		setMessage = setMessage.replaceAt(2,String.fromCharCode(pin));
 
 		switch (mode) {
 			//Input. Enable reading report
 			case menus[lang]['pinModes'][0]:
-				setMessage[3] = 100; //d
+				setMessage = setMessage.replaceAt(3,"d");
 				break;
 				//Output. Disable reading report
 			case menus[lang]['pinModes'][1]:
-				setMessage[3] = 110; //n
+				setMessage = setMessage.replaceAt(3,"n");
 				break;
 		}
 
-		device.send(setMessage.buffer);
+		sendDevice(setMessage);
 	}
 
 	//Enable or disable pin pull-up
@@ -212,11 +207,7 @@
 		if (pin > 15)
 			return;
 
-		var setMessage = new Uint8Array(6);
-		setMessage[0] = 77; //M
-		setMessage[1] = 89; //Y
-		setMessage[2] = 121; //y
-		setMessage[5] = 13; //\r
+		var setMessage = "MYy__";
 
 		//Enable
 		if (mode == menus[lang]['enable_disable'][0]) {
@@ -225,10 +216,10 @@
 			pin = pin + 200;
 		}
 
-		setMessage[3] = convertToHex((pin & 0xF0) >> 4);
-		setMessage[4] = convertToHex((pin & 0x0F));
+		setMessage = setMessage.replaceAt(3,String.fromCharCode(convertToHex((pin & 0xF0) >> 4)));
+		setMessage = setMessage.replaceAt(4,String.fromCharCode(convertToHex(convertToHex((pin & 0x0F)))));
 
-		device.send(setMessage.buffer);
+		sendDevice(setMessage);
 		printLog(setMessage);
 	}
 
@@ -248,62 +239,54 @@
 		if (pin > 15)
 			return;
 
-		var setMessage = new Uint8Array(6);
-		setMessage[0] = 77; //M
-		setMessage[1] = 89; //Y
-		setMessage[5] = 13; //\r
+		var setMessage = "MY___";
 
 		pin += 100;
-		setMessage[3] = convertToHex((pin & 0xF0) >> 4);
-		setMessage[4] = convertToHex((pin & 0x0F));
+		setMessage = setMessage.replaceAt(3,String.fromCharCode(convertToHex(convertToHex((pin & 0xF0) >> 4))));
+		setMessage = setMessage.replaceAt(4,String.fromCharCode(convertToHex((pin & 0x0F))));
 
 		switch (status) {
 			//On
 			case menus[lang]['on_off'][0]:
-				setMessage[2] = 203;
+				setMessage = setMessage.replaceAt(2,fromCharCode(203));
 				break;
 				//Off
 			case menus[lang]['on_off'][1]:
-				setMessage[2] = 202;
+				setMessage = setMessage.replaceAt(2,fromCharCode(202));
 				break;
 		}
 
-		device.send(setMessage.buffer);
+		sendDevice(setMessage);
 	}
 
 	//Control the servos angle
 	ext.setServo = function (servo, angle) {
 		angle = Math.round(angle);
 
-		var sendServo = new Uint8Array(7);
-		sendServo[0] = 77; //M
-		sendServo[2] = 13; //\r
-		sendServo[6] = 13; //\r
+		var sendServo = "M_\r___";
 
 		if (angle < 0)
 			angle = 0;
 		if (angle > 180)
 			angle = 180;
-		sendServo[3] = angle / 100 + 48;
-		sendServo[4] = (angle % 100) / 10 + 48;
-		sendServo[5] = angle % 10 + 48;
-
+		
+		sendServo = sendServo.replaceAt(3,String.fromCharCode(angle / 100 + 48));
+		sendServo = sendServo.replaceAt(4,String.fromCharCode((angle % 100) / 10 + 48));
+		sendServo = sendServo.replaceAt(5,String.fromCharCode(angle % 10 + 48));
+		
 		if (servo == menus[lang]['servos'][0])
-			sendServo[1] = 111; //o
+			sendServo = sendServo.replaceAt(1,"o");
 		if (servo == menus[lang]['servos'][1])
-			sendServo[1] = 112; //p
+			sendServo = sendServo.replaceAt(1,"p");
 
-		device.send(sendServo.buffer);
+		sendDevice(sendServo);
 	}
 
 	//Control the motors direction and power
 	ext.setMotor = function (motor, direction, power) {
 		power = Math.round(power);
 
-		var sendMotor = new Uint8Array(7);
-		sendMotor[0] = 77; //M
-		sendMotor[2] = 13; //\r
-		sendMotor[6] = 13; //\r
+		var sendMotor = "M_\r___";
 
 		if (power < 0)
 			power = 0;
@@ -311,34 +294,29 @@
 			power = 100;
 		if (direction == menus[lang]['directions'][1])
 			power = power + 128;
-		sendMotor[3] = power / 100 + 48;
-		sendMotor[4] = (power % 100) / 10 + 48;
-		sendMotor[5] = power % 10 + 48;
-
+		
+		sendMotor = sendMotor.replaceAt(3,fromCharCode(power / 100 + 48));
+		sendMotor = sendMotor.replaceAt(4,fromCharCode((power % 100) / 10 + 48));
+		sendMotor = sendMotor.replaceAt(5,fromCharCode(power % 10 + 48));
+		
 		if (motor == menus[lang]['motor'][0])
-			sendMotor[1] = 101 //e
+			sendMotor = sendMotor.replaceAt(1,"e");
 		if (motor == menus[lang]['motor'][1])
-			sendMotor[1] = 100 //d
-
-		device.send(sendMotor.buffer);
+			sendMotor = sendMotor.replaceAt(1,"d");
+		
+		sendDevice(sendMotor);
 	}
 
 	//Stop the motor
 	ext.stopMotor = function (motor) {
-		var sendMotor = new Uint8Array(7);
-		sendMotor[0] = 77; //M
-		sendMotor[2] = 13; //\r
-		sendMotor[3] = 48; //0
-		sendMotor[4] = 48; //0
-		sendMotor[5] = 48; //0
-		sendMotor[6] = 13; //\r
+		var sendMotor = "M_\r000";
 
 		if (motor == menus[lang]['motor'][0])
-			sendMotor[1] = 101 //e
+			sendMotor = sendMotor.replaceAt(1,"e");
 		if (motor == menus[lang]['motor'][1])
-			sendMotor[1] = 100 //d
+			sendMotor = sendMotor.replaceAt(1,"d");
 
-		device.send(sendMotor.buffer);
+		sendDevice(sendMotor);
 	}
 
 	//Play a note for certain amount of time
@@ -352,11 +330,7 @@
 
 	//Play a note
 	ext.playNote = function (note) {
-		var sendSound = new Uint8Array(7);
-		sendSound[0] = 77; //M
-		sendSound[1] = 77; //M
-		sendSound[2] = 13; //\r
-		sendSound[6] = 13; //\r
+		var sendSound = "MM\r___";
 
 		var value;
 
@@ -401,61 +375,47 @@
 				value = 118
 		}
 
-		sendSound[3] = value / 100 + 48;
-		sendSound[4] = (value % 100) / 10 + 48;
-		sendSound[5] = value % 10 + 48;
-
-		device.send(sendSound.buffer);
+		sendSound = sendSound.replaceAt(3,String.fromCharCode(value / 100 + 48));
+		sendSound = sendSound.replaceAt(4,String.fromCharCode((value % 100) / 10 + 48));
+		sendSound = sendSound.replaceAt(5,String.fromCharCode(value % 10 + 48));
+		
+		sendDevice(sendSound);
 	}
 
 	//Mute the device
 	ext.mute = function () {
-		var sendMute = new Uint8Array(3);
-		sendMute[0] = 77; //M
-		sendMute[1] = 109; //m
-		sendMute[2] = 13; //\r
-
-		device.send(sendMute.buffer);
+		var sendMute = "Mm";
+		
+		sendDevice(sendMute);
 	}
 
 	ext.sigaFujaFaixa = function (comportamento) {
-		var sendSLuz = new Uint8Array(4);
-		sendSLuz[0] = 77; //M
-		sendSLuz[1] = 71; //G
-		sendSLuz[3] = 13; //\r
+		var sendSLuz = "MG_";
 
 		if (comportamento == menus[lang]['comportamentoLuz'][0])  // Siga Luz
-			sendSLuz[2] = 76; //L	
+			sendSLuz = sendSLuz.replaceAt(2,"L");
 		if (comportamento == menus[lang]['comportamentoLuz'][1])  // Fuja Luz
-			sendSLuz[2] = 108; //l
+			sendSLuz = sendSLuz.replaceAt(2,"l");
 
-		device.send(sendSLuz.buffer);
+		sendDevice(sendSLuz);
 	}
 
 	//Siga Faixa
 	ext.sigaFaixa = function (tipoFaixa) {
-		var sendSLuz = new Uint8Array(4);
-		sendSLuz[0] = 77; //M
-		sendSLuz[1] = 71; //G
-		sendSLuz[3] = 13; //\r
+		var sendSLuz = "MG_";
 
 		if (tipoFaixa == menus[lang]['corFaixa'][0])  // clara
-			sendSLuz[2] = 70 //F	
+			sendSLuz = sendSLuz.replaceAt(2,"F");
 		if (tipoFaixa == menus[lang]['corFaixa'][1])  // escura
-			sendSLuz[2] = 102 //f
+			sendSLuz = sendSLuz.replaceAt(2,"f");
 
-		device.send(sendSLuz.buffer);
+		sendDevice(sendSLuz);
 	}
 
 	//Para os motores e sai dos comandos siga.
 	ext.paraMotores = function () {
-		var sendSLuz = new Uint8Array(4);
-		sendSLuz[0] = 77; //M
-		sendSLuz[1] = 71; //G
-		sendSLuz[2] = 112; //p
-		sendSLuz[3] = 13; //\r
-
-		device.send(sendSLuz.buffer);
+		var sendSLuz = "MGp";
+		sendDevice(sendSLuz);
 	}
 
 	//Convertion functions
@@ -531,14 +491,7 @@
 	//************************************************************* 
 
 	//Decode the received message
-	function decodeMessage(bytes) {
-		var data = String.fromCharCode.apply(null, bytes);
-
-		if (data.indexOf('K') == -1)
-			return false;
-
-		//console.log(data);
-
+	function decodeMessage(data) {
 		//IDs
 		var idS1_index = data.indexOf('A');
 		var idS2_index = data.indexOf('B');
@@ -656,7 +609,7 @@
 		if (message == "pMK2.0" && !connected) {
 			found = true;
 		} else if (!connected && found && message == "Mnf") {
-			sendDevice("Ms10\r");
+			sendDevice("Ms10");
 			found = false;
 		} else if (message == "Msk" && !connected) {
 			connected = true;
@@ -685,26 +638,33 @@
 						connected = false;
 						tryNextDevice();
 					} else if (dataLost > 2) {
-						sendDevice("MV\r");
+						requestData();
 						dataLost++;
 					} else {
 						dataLost++;
 					}
 				}
 			}, 1000);
-
-			sendDevice("MV\r");
+			
+			requestData();
 		} else if (connected) {
 			if (message == "K") {
-				sendDevice("MV\r");
+				requestData();
+			}
+			else {
+				decodeMessage(message);
 			}
 		}
+	}
+	
+	function requestData() {
+		sendDevice("MV");
 	}
 
 	function sendDevice(s) {
 		if (debugLevel >= 2)
 			console.log('Dado Enviado: ' + s);
-		device.send(stringToArrayBuffer(s));
+		device.send(stringToArrayBuffer(s+"\r"));
 	}
 
 	function stringToArrayBuffer(str) {
@@ -735,7 +695,7 @@
 
 		device.open({stopBits: 0, bitRate: 9600, ctsFlowControl: 0}, function () {
 			device.set_receive_handler(function (data) {
-				if (debugLevel >= 1)
+				if (debugLevel >= 2)
 					console.log('Dado Recebido: ' + arrayBufferToString(data));
 
 
@@ -750,7 +710,7 @@
 			});
 		});
 
-		sendDevice("Mn\r");
+		sendDevice("Mn");
 
 		if (debugLevel >= 1)
 			console.log('Tentando conectar com dispositivo ' + device.id);
@@ -809,15 +769,9 @@
 			console.log('Executando: _shutdown');
 
 		if (device) {
-			var sendFinish = new Uint8Array(3);
-			sendFinish[0] = 77; //M
-			sendFinish[1] = 102; //f
-			sendFinish[2] = 13; //\r
-			device.send(sendFinish.buffer);
-			sendFinish[0] = 77; //M
-			sendFinish[1] = 102; //f
-			sendFinish[2] = 13; //\r
-			device.send(sendFinish.buffer);
+			var sendFinish = "Mf";
+			sendDevice(sendFinish);
+			sendDevice(sendFinish);
 
 			device.close();
 		}
@@ -986,6 +940,10 @@
 		menus: menus[lang],
 		url: 'http://PeteEducacao.github.io/ScratchForAlphaMaker'
 	};
+
+	String.prototype.replaceAt=function(index, replacement) {
+		return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
+	}
 
 	// Descricao do hardware
 
