@@ -108,7 +108,7 @@
 				break;
 		}
 		//'Contato', 'Proximidade', 'Faixa', 'Cor', 'Luz (Lux)', 'Som (dB)', 'Temperatura (°C)',
-		//'Resistência (Ohm)', 'Tensão (V)', 'Distância (cm)', 'Distância Sharp (cm)'
+		//'Resistência (Ohm)', 'Tensão (V)', 'Distância (cm)', 'Genérico'
 		
 		switch (portsSelectedSensor[port]) {
 			//Digital
@@ -479,12 +479,6 @@
 	//Convert the value to cm
 	function convertToCentimeters(val) {
 		return Math.round(val * 0.2);
-	}
-
-	function convertToCentimetersSharp(val) {
-		if (val < 85)
-			val = 85;
-		return Math.round(1 / (0.000225194 * val - 0.0077244));
 	}
 
 	//************************************************************* 
