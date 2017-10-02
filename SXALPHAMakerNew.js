@@ -602,8 +602,8 @@
 			requestData();
 		} else if (connected) {
 			if (message == "K") {
-				//requestData();
-				setTimeout(function(){ requestData(); },2000);
+				requestData();
+				//setTimeout(function(){ requestData(); },2000);
 			}
 			else {
 				decodeMessage(message);
