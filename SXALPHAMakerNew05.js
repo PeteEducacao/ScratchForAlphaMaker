@@ -23,7 +23,7 @@
 	var pinValues = new Uint16Array(22);
 
 	// Variavel para controlar o envio de mensagens de debug.
-	var debugLevel = 2;
+	var debugLevel = 2; 
 
 	// Verifica o parametro para escolha do idioma
 	var paramString = window.location.search.replace(/^\?|\/$/g, '');
