@@ -6,6 +6,7 @@
 	var device = null;
 	var rawData = null;
 	var lang = 'en';
+	var messageBuffer = "";
 
 	var watchdog = null;
 	var comWatchdog = null;
@@ -550,8 +551,20 @@
 	//Trata os dados recebidos
 	function TrataDados(message) {
 		dataLost = 0;
-		if (debugLevel >= 2)
-			console.log('Trata os dados recebidos!');
+		if (debugLevel >= 2) {
+			if (debugLevel >= 2) {
+				console.log('Dado Recebido: ' + message);
+				
+				var aaa = "";
+				var separator = "";
+				for (var i = 0;i<message.length; i++) {
+					aaa += message.charCodeAt(i) + separator;
+					separator = " ; ";
+				}
+				
+				console.log('Cod. Recebido: ' + message);
+			}
+		}
 
 		if (message == "pMK2.0" && !connected) {
 			found = true;
@@ -643,14 +656,13 @@
 
 		device.open({stopBits: 0, bitRate: 9600, ctsFlowControl: 0}, function () {
 			device.set_receive_handler(function (data) {
-				if (debugLevel >= 2)
-					console.log('Dado Recebido: ' + arrayBufferToString(data));
-
 
 				var dataString = arrayBufferToString(data);
 				var message = "";
-
-				while (dataString.indexOf("\n") >= 0) {
+				
+				messageBuffer += dataString;
+				
+				while (messageBuffer.indexOf("\n") >= 0) {
 					message = dataString.substr(0, dataString.indexOf("\n"));
 					dataString = dataString.substr(dataString.indexOf("\n") + 1);
 					TrataDados(myTrim(message));
@@ -682,7 +694,7 @@
 	}
 
 	//************************************************************* 
-	// FUNÇÕES DO SISTEMA QUE MONITORAm OS DISPOSITIVOS SERIAIS CONECTADOS
+	// FUNÇÕES DO SISTEMA QUE MONITORAM OS DISPOSITIVOS SERIAIS CONECTADOS
 
 	ext._deviceConnected = function (dev) {
 		if (debugLevel >= 2)
