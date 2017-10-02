@@ -558,7 +558,7 @@
 				var aaa = "";
 				var separator = "";
 				for (var i = 0;i<message.length; i++) {
-					aaa += message.charCodeAt(i) + separator;
+					aaa += separator + message.charCodeAt(i);
 					separator = " ; ";
 				}
 				
