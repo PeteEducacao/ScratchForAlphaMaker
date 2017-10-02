@@ -559,7 +559,7 @@
 				var separator = "";
 				for (var i = 0;i<message.length; i++) {
 					aaa += separator + message.charCodeAt(i);
-					separator = " ; ";
+					separator = " ; "; 
 				}
 				
 				console.log('Cod. Recebido: ' + message);
