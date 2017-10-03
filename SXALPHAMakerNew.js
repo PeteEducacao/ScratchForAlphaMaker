@@ -657,8 +657,6 @@
 					
 					TrataDados(myTrim(message));
 				}
-				
-				console.log('Dado Recebido Resto: ' + messageBuffer);
 			});
 		});
 
