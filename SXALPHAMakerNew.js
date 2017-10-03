@@ -13,12 +13,14 @@
 	var poller = null;
 
 	var dataLost = 0;
+	var canRequest = 0;
 
 	var connected = false;
 	var found = false;
 	
 	var portsValue = new Array(4);
 	var portsID = new Array(4);
+	var toWrite = new Array();
 	var portsSelectedSensor = new Array(4);
 	var pinValues = new Uint16Array(22);
 
@@ -89,7 +91,7 @@
 				break;
 		}
 
-		sendDevice(setMessage);
+		toWrite.push(setMessage);
 	}
 
 	//Read the port, automatically convert the value using the selected sensor
@@ -162,7 +164,7 @@
 		pin += 97;
 		setMessage = setMessage.replaceAt(2,String.fromCharCode(pin));
 
-		sendDevice(setMessage);
+		toWrite.push(setMessage);
 	}
 
 	//Read analog pin
@@ -197,7 +199,7 @@
 				break;
 		}
 
-		sendDevice(setMessage);
+		toWrite.push(setMessage);
 	}
 
 	//Enable or disable pin pull-up
@@ -219,7 +221,7 @@
 		setMessage = setMessage.replaceAt(3,String.fromCharCode(convertToHex((pin & 0xF0) >> 4)));
 		setMessage = setMessage.replaceAt(4,String.fromCharCode(convertToHex(convertToHex((pin & 0x0F)))));
 
-		sendDevice(setMessage);
+		toWrite.push(setMessage);
 		printLog(setMessage);
 	}
 
@@ -256,7 +258,7 @@
 				break;
 		}
 
-		sendDevice(setMessage);
+		toWrite.push(setMessage);
 	}
 
 	//Control the servos angle
@@ -279,7 +281,7 @@
 		if (servo == menus[lang]['servos'][1])
 			sendServo = sendServo.replaceAt(1,"p");
 
-		sendDevice(sendServo);
+		toWrite.push(sendServo);
 	}
 
 	//Control the motors direction and power
@@ -304,7 +306,7 @@
 		if (motor == menus[lang]['motor'][1])
 			sendMotor = sendMotor.replaceAt(1,"d");
 		
-		sendDevice(sendMotor);
+		toWrite.push(sendMotor);
 	}
 
 	//Stop the motor
@@ -316,7 +318,7 @@
 		if (motor == menus[lang]['motor'][1])
 			sendMotor = sendMotor.replaceAt(1,"d");
 
-		sendDevice(sendMotor);
+		toWrite.push(sendMotor);
 	}
 
 	//Play a note for certain amount of time
@@ -379,14 +381,14 @@
 		sendSound = sendSound.replaceAt(4,String.fromCharCode((value % 100) / 10 + 48));
 		sendSound = sendSound.replaceAt(5,String.fromCharCode(value % 10 + 48));
 		
-		sendDevice(sendSound);
+		toWrite.push(sendSound);
 	}
 
 	//Mute the device
 	ext.mute = function () {
 		var sendMute = "Mm";
 		
-		sendDevice(sendMute);
+		toWrite.push(sendMute);
 	}
 
 	ext.sigaFujaFaixa = function (comportamento) {
@@ -397,7 +399,7 @@
 		if (comportamento == menus[lang]['comportamentoLuz'][1])  // Fuja Luz
 			sendSLuz = sendSLuz.replaceAt(2,"l");
 
-		sendDevice(sendSLuz);
+		toWrite.push(sendSLuz);
 	}
 
 	//Siga Faixa
@@ -409,13 +411,13 @@
 		if (tipoFaixa == menus[lang]['corFaixa'][1])  // escura
 			sendSLuz = sendSLuz.replaceAt(2,"f");
 
-		sendDevice(sendSLuz);
+		toWrite.push(sendSLuz);
 	}
 
 	//Para os motores e sai dos comandos siga.
 	ext.paraMotores = function () {
 		var sendSLuz = "MGp";
-		sendDevice(sendSLuz);
+		toWrite.push(sendSLuz);
 	}
 
 	//Convertion functions
@@ -555,6 +557,9 @@
 			console.log('Dado Recebido: ' + message);
 		}
 
+		if (message == "MC" && connected) {
+			closeConnection();
+		}
 		if (message == "pMK2.0" && !connected) {
 			found = true;
 		} else if (!connected && found && message == "Mnf") {
@@ -576,30 +581,25 @@
 			comWatchdog = setInterval(function () {
 				if (connected) {
 					if (dataLost > 5) {
-						clearInterval(comWatchdog);
-						comWatchdog = null;
-
-						console.log('Conexão Perdida');
-						device.set_receive_handler(null);
-						device.close();
-						device = null;
-						found = false;
-						connected = false;
-						tryNextDevice();
+						closeConnection();
 					} else if (dataLost > 2) {
-						requestData();
+						canRequest++;
 						dataLost++;
 					} else {
 						dataLost++;
 					}
 				}
+				else {
+					dataLost = 0;
+				}
 			}, 1000);
 			
-			requestData();
+			setTimeout(function () { requesterFunction(); }, 100);
+			
+			canRequest = 1;
 		} else if (connected) {
 			if (message == "K") {
-				requestData();
-				//setTimeout(function(){ requestData(); },2000);
+				canRequest++;
 			}
 			else {
 				decodeMessage(message);
@@ -607,10 +607,40 @@
 		}
 	}
 	
-	function requestData() {
-		sendDevice("MV");
-	}
+	function closeConnection() {
+		clearInterval(comWatchdog);
+		comWatchdog = null;
 
+		console.log('Conexão Perdida');
+		device.set_receive_handler(null);
+		device.close();
+		device = null;
+		found = false;
+		connected = false;
+		tryNextDevice();
+	}
+	
+	function requesterFunction() {
+		if (connected) {
+			var nextDelay = 0;
+			if (canRequest == 1) {
+				if (toWrite.length > 0) {
+					var auxToWrite = toWrite.shift();
+					canRequest = 0;
+					sendDevice(auxToWrite);
+				} else {
+					canRequest = 0;
+					sendDevice("MV");
+				}
+			}
+			else if (canRequest > 1) {
+				canRequest--;
+				nextDelay = 50;
+			}
+			setTimeout(function () { requesterFunction(); }, 100+nextDelay);
+		}
+	}
+	
 	function sendDevice(s) {
 		if (debugLevel >= 2)
 			console.log('Dado Enviado: ' + s);
@@ -720,8 +750,8 @@
 
 		if (device) {
 			var sendFinish = "Mf";
-			sendDevice(sendFinish);
-			sendDevice(sendFinish);
+			toWrite.push(sendFinish);
+			toWrite.push(sendFinish);
 
 			device.close();
 		}
@@ -753,6 +783,9 @@
 
 		if (debugLevel >= 1) {
 			console.log('Conectado com dispositivo na porta: ' + device.id);
+			if (!connected) {
+				
+			}
 		}
 
 		return {status: 2, msg: 'ALPHA Maker conectada!'};
