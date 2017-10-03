@@ -23,7 +23,7 @@
 	var pinValues = new Uint16Array(22);
 
 	// Variavel para controlar o envio de mensagens de debug.
-	var debugLevel = 0;
+	var debugLevel = 0; 
 
 	// Verifica o parametro para escolha do idioma
 	var paramString = window.location.search.replace(/^\?|\/$/g, '');
@@ -552,18 +552,7 @@
 	function TrataDados(message) {
 		dataLost = 0;
 		if (debugLevel >= 2) {
-			if (debugLevel >= 2) {
-				console.log('Dado Recebido: ' + message);
-				
-				var aaa = "";
-				var separator = "";
-				for (var i = 0;i<message.length; i++) {
-					aaa += separator + message.charCodeAt(i);
-					separator = " ; "; 
-				}
-				
-				console.log('Cod. Recebido: ' + message);
-			}
+			console.log('Dado Recebido: ' + message);
 		}
 
 		if (message == "pMK2.0" && !connected) {
@@ -663,10 +652,13 @@
 				messageBuffer += dataString;
 				
 				while (messageBuffer.indexOf("\n") >= 0) {
-					message = dataString.substr(0, dataString.indexOf("\n"));
-					dataString = dataString.substr(dataString.indexOf("\n") + 1);
+					message = messageBuffer.substr(0, messageBuffer.indexOf("\n"));
+					messageBuffer = messageBuffer.substr(messageBuffer.indexOf("\n") + 1);
+					
 					TrataDados(myTrim(message));
 				}
+				
+				console.log('Dado Recebido Resto: ' + messageBuffer);
 			});
 		});
 
