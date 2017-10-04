@@ -25,7 +25,7 @@
 	var pinValues = new Uint16Array(22);
 
 	// Variavel para controlar o envio de mensagens de debug.
-	var debugLevel = 2;
+	var debugLevel = 0; 
 
 	// Verifica o parametro para escolha do idioma
 	var paramString = window.location.search.replace(/^\?|\/$/g, '');
@@ -265,25 +265,23 @@
 	ext.setServo = function (servo, angle) {
 		angle = Math.round(angle);
 
-		var sendServo1 = "M_";
-		var sendServo2 = "___";
+		var sendServo = "M_\r___";
 
 		if (angle < 0)
 			angle = 0;
 		if (angle > 180)
 			angle = 180;
 		
-		sendServo2 = sendServo2.replaceAt(0,String.fromCharCode(angle / 100 + 48));
-		sendServo2 = sendServo2.replaceAt(1,String.fromCharCode((angle % 100) / 10 + 48));
-		sendServo2 = sendServo2.replaceAt(2,String.fromCharCode(angle % 10 + 48));
+		sendServo = sendServo.replaceAt(3,String.fromCharCode(angle / 100 + 48));
+		sendServo = sendServo.replaceAt(4,String.fromCharCode((angle % 100) / 10 + 48));
+		sendServo = sendServo.replaceAt(5,String.fromCharCode(angle % 10 + 48));
 		
 		if (servo == menus[lang]['servos'][0])
-			sendServo1 = sendServo1.replaceAt(1,"o");
+			sendServo = sendServo.replaceAt(1,"o");
 		if (servo == menus[lang]['servos'][1])
-			sendServo1 = sendServo1.replaceAt(1,"p");
+			sendServo = sendServo.replaceAt(1,"p");
 
-		toWrite.push(sendServo1);
-		toWrite.push(sendServo2);
+		toWrite.push(sendServo);
 	}
 
 	//Control the motors direction and power
@@ -471,9 +469,7 @@
 
 	//Convert the value to Lux
 	function convertToLux(val) {
-		console.log('valor ' + val);
 		return Math.round(5.0 * val / 16.31096775);
-		//return Math.round(50 * val / (2700000 / 127 * 0.00076725)) / 10;
 	}
 
 	//Convert the value to dB
@@ -596,7 +592,7 @@
 				}
 			}, 1000);
 			
-			setTimeout(function () { requesterFunction(); }, 2000);
+			setTimeout(function () { requesterFunction(); }, 100);
 			
 			canRequest = 1;
 		} else if (connected) {
@@ -639,7 +635,7 @@
 				canRequest--;
 				nextDelay = 50;
 			}
-			setTimeout(function () { requesterFunction(); }, 2000+nextDelay);
+			setTimeout(function () { requesterFunction(); }, 100+nextDelay);
 		}
 	}
 	
