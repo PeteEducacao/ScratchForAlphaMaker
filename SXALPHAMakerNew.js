@@ -91,7 +91,7 @@
 				break;
 		}
 
-		toWrite.push(setMessage);
+		addStringToWrite(setMessage);
 	}
 
 	//Read the port, automatically convert the value using the selected sensor
@@ -164,7 +164,7 @@
 		pin += 97;
 		setMessage = setMessage.replaceAt(2,String.fromCharCode(pin));
 
-		toWrite.push(setMessage);
+		addStringToWrite(setMessage);
 	}
 
 	//Read analog pin
@@ -199,7 +199,7 @@
 				break;
 		}
 
-		toWrite.push(setMessage);
+		addStringToWrite(setMessage);
 	}
 
 	//Enable or disable pin pull-up
@@ -221,7 +221,7 @@
 		setMessage = setMessage.replaceAt(3,String.fromCharCode(convertToHex((pin & 0xF0) >> 4)));
 		setMessage = setMessage.replaceAt(4,String.fromCharCode(convertToHex(convertToHex((pin & 0x0F)))));
 
-		toWrite.push(setMessage);
+		addStringToWrite(setMessage);
 		printLog(setMessage);
 	}
 
@@ -258,7 +258,7 @@
 				break;
 		}
 
-		toWrite.push(setMessage);
+		addStringToWrite(setMessage);
 	}
 
 	//Control the servos angle
@@ -281,7 +281,7 @@
 		if (servo == menus[lang]['servos'][1])
 			sendServo = sendServo.replaceAt(1,"p");
 
-		toWrite.push(sendServo);
+		addStringToWrite(sendServo);
 	}
 
 	//Control the motors direction and power
@@ -306,7 +306,7 @@
 		if (motor == menus[lang]['motor'][1])
 			sendMotor = sendMotor.replaceAt(1,"d");
 		
-		toWrite.push(sendMotor);
+		addStringToWrite(sendMotor);
 	}
 
 	//Stop the motor
@@ -318,7 +318,7 @@
 		if (motor == menus[lang]['motor'][1])
 			sendMotor = sendMotor.replaceAt(1,"d");
 
-		toWrite.push(sendMotor);
+		addStringToWrite(sendMotor);
 	}
 
 	//Play a note for certain amount of time
@@ -381,14 +381,14 @@
 		sendSound = sendSound.replaceAt(4,String.fromCharCode((value % 100) / 10 + 48));
 		sendSound = sendSound.replaceAt(5,String.fromCharCode(value % 10 + 48));
 		
-		toWrite.push(sendSound);
+		addStringToWrite(sendSound);
 	}
 
 	//Mute the device
 	ext.mute = function () {
 		var sendMute = "Mm";
 		
-		toWrite.push(sendMute);
+		addStringToWrite(sendMute);
 	}
 
 	ext.sigaFujaFaixa = function (comportamento) {
@@ -399,7 +399,7 @@
 		if (comportamento == menus[lang]['comportamentoLuz'][1])  // Fuja Luz
 			sendSLuz = sendSLuz.replaceAt(2,"l");
 
-		toWrite.push(sendSLuz);
+		addStringToWrite(sendSLuz);
 	}
 
 	//Siga Faixa
@@ -411,13 +411,19 @@
 		if (tipoFaixa == menus[lang]['corFaixa'][1])  // escura
 			sendSLuz = sendSLuz.replaceAt(2,"f");
 
-		toWrite.push(sendSLuz);
+		addStringToWrite(sendSLuz);
 	}
 
 	//Para os motores e sai dos comandos siga.
 	ext.paraMotores = function () {
 		var sendSLuz = "MGp";
-		toWrite.push(sendSLuz);
+		addStringToWrite(sendSLuz);
+	}
+
+	function addStringToWrite(value) {
+		if (toWrite.length <= 2) {
+			toWrite.push(value);
+		}
 	}
 
 	//Convertion functions
@@ -748,8 +754,8 @@
 
 		if (device) {
 			var sendFinish = "Mf";
-			toWrite.push(sendFinish);
-			toWrite.push(sendFinish);
+			addStringToWrite(sendFinish);
+			addStringToWrite(sendFinish);
 
 			device.close();
 		}
