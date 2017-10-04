@@ -421,7 +421,7 @@
 	}
 
 	function addStringToWrite(value) {
-		if (toWrite.length <= 2) {
+		if (toWrite.length == 0) {
 			toWrite.push(value);
 		}
 	}
