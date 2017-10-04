@@ -25,7 +25,7 @@
 	var pinValues = new Uint16Array(22);
 
 	// Variavel para controlar o envio de mensagens de debug.
-	var debugLevel = 0; 
+	var debugLevel = 2; 
 
 	// Verifica o parametro para escolha do idioma
 	var paramString = window.location.search.replace(/^\?|\/$/g, '');
@@ -495,7 +495,7 @@
 		if (data.charAt(0) >= "A" && data.charAt(0) <= "D") {
 			var portIndex = data.charCodeAt(0) - "A".charCodeAt(0);
 			portsID[portIndex] = parseInt(data.substring(1));
-			//console.log("Recebido("+data+") - Port(+"+portIndex+"): "+portsID[portIndex]);
+			//consog("Recebido("+data+") - Port(+"+portIndex+"): "+portsID[portIndex]);
 
 			return; 
 		}
@@ -598,7 +598,7 @@
 				}
 			}, 1000);
 			
-			setTimeout(function () { requesterFunction(); }, 500);
+			setTimeout(function () { requesterFunction(); }, 2000);
 			
 			canRequest = 1;
 		} else if (connected) {
@@ -641,7 +641,7 @@
 				canRequest--;
 				nextDelay = 50;
 			}
-			setTimeout(function () { requesterFunction(); }, 500+nextDelay);
+			setTimeout(function () { requesterFunction(); }, 2000+nextDelay);
 		}
 	}
 	
